@@ -82,33 +82,21 @@ public class MainTeleOp extends RobotBase
 
 
     protected void lift_loop() {
-
-        double clawTarget;
-        if (gamepad2.left_trigger > 0.01) {
-            clawTarget = 0.015 + 0.075 * gamepad2.left_trigger;
-            lift.claw.servo.position(clawTarget);
-        } else {
-            lift.claw.servo.close();
-        }
+        lift.slide.doSlideStuff(gamepad2);
+//        telemetry.addData("GP2.left_stick_y:", gamepad2.left_stick_y);
+//        telemetry.addData("GP2.a:", gamepad2.a);
+//        telemetry.addData("GP2.b:", gamepad2.b);
+//        telemetry.addData("GP2.x:", gamepad2.x);
+//        telemetry.addData("GP2.y:", gamepad2.y);
     }
 
     protected void drive_loop() {
 
-        //*** Test for manual override/turtle mode/field centric ***
-        telemetry.addData("left_stick_x:", gamepad1.left_stick_x);
-        telemetry.addData("left_stick_y:", gamepad1.left_stick_y);
-        telemetry.addData("right_stick_x:", gamepad1.right_stick_x);
-        telemetry.addData("right_stick_y:", gamepad1.right_stick_y);
-        telemetry.addData("gamepad2.left_trigger:", gamepad2.left_trigger);
-        telemetry.addData("gamepad2.right_trigger:", gamepad2.right_trigger);
-
+        //
+        //slidePosition
         drive.turtleFactor = (1-gamepad1.right_trigger*0.5);
-        telemetry.addData("turtleFactor:", drive.turtleFactor);
+//        telemetry.addData("turtleFactor:", drive.turtleFactor);
         drive.driveFromGamepad(gamepad1);
-
-        if (gamepad1.right_stick_button) {
-            drive.turn();
-        }
     }
 
     protected void husky_loop() {

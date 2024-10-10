@@ -1,8 +1,11 @@
 package org.firstinspires.ftc.teamcode.subsystems;
 
+import androidx.annotation.NonNull;
+import com.acmerobotics.dashboard.telemetry.TelemetryPacket;
+import com.acmerobotics.roadrunner.Action;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.HardwareMap;
-
+import com.qualcomm.robotcore.hardware.Gamepad;
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.opmodes.RobotBase;
 
@@ -10,15 +13,7 @@ public class Lift {
     protected HardwareMap hardwareMap;
     protected Telemetry telemetry;
     protected RobotBase robotBase;
-
-
-    public Bridge bridge;
-    public Slide slide;
-    public Rotator rotator;
-    public Claw claw;
-
-    public boolean allowManualInterrupt = true;
-
+    public    Slide slide;
 
     public Lift(HardwareMap hardwareMap, RobotBase opMode) {
         this.hardwareMap = hardwareMap;
@@ -29,126 +24,7 @@ public class Lift {
     }
 
     protected void initHardware() {
-        bridge = new Bridge();
         slide = new Slide();
-        rotator = new Rotator();
-        claw = new Claw();
-    }
-
-    public boolean isBusy() {
-        return false;
-    }
-
-    public void stop() {
-        bridge.stop();
-    }
-
-    public class Bridge {
-        public DcMotor bridgeMotorCenter;
-        private int bridgeUp = 1000;
-        private int bridgeDown = 1000;
-        private int bridgeSpeed = 1;
-        private int bridgeReset = 200;
-
-        public Bridge() { //HardwareMap hardwareMap, RobotBase opMode
-            initHardware();
-        }
-
-        protected void initHardware() {
-            bridgeMotorCenter = hardwareMap.get(DcMotor.class, "bridge");
-            bridgeMotorCenter.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-            bridgeMotorCenter.setDirection(DcMotor.Direction.FORWARD);
-            bridgeMotorCenter.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        }
-
-        public void up() {
-            bridgeMotorCenter.setTargetPosition(bridgeUp);
-            bridgeMotorCenter.setPower(bridgeSpeed);
-            bridgeMotorCenter.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        }
-
-        public void down() {
-            bridgeMotorCenter.setTargetPosition(bridgeDown);
-            bridgeMotorCenter.setPower(bridgeSpeed);
-            bridgeMotorCenter.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        }
-
-        public boolean isBusy() {
-            if (bridgeMotorCenter.isBusy()) {
-                return true;
-            }
-            return false;
-        }
-
-        public void reset() {
-            bridgeMotorCenter.setTargetPosition(bridgeReset);
-            bridgeMotorCenter.setPower(bridgeSpeed);
-        }
-
-        public void stop() {
-            bridgeMotorCenter.setPower(0.0);
-        }
-    }
-
-    public class Rotator {
-        public Servo servo;
-
-        public boolean allowManualInterrupt = true;
-        private double servoOpenPosition = 0.09;
-        private double servoClosePosition = 0.015;
-        private double servoHomePosition  = 0.015;
-
-        public void Claw(HardwareMap hardwareMap, RobotBase opMode) { initHardware(); }
-
-        protected void initHardware() {
-            servo = new Servo();
-        }
-
-        public boolean isBusy() {
-           if (servo.isBusy()) {
-                    return true;
-                }
-            return false;
-        }
-
-        public class Servo {
-            private com.qualcomm.robotcore.hardware.Servo servo;
-            private boolean rollerUp = true;
-
-            public Servo() { //HardwareMap hardwareMap, RobotBase opMode
-                initHardware();
-            }
-
-            protected void initHardware() {
-                servo = hardwareMap.get(com.qualcomm.robotcore.hardware.Servo.class, "rotator");
-                close();
-            }
-
-            public void position(double targetPosition) {
-                servo.setPosition(targetPosition);
-            }
-
-            public void open() {
-                position(servoOpenPosition);
-            }
-
-            public void close() {
-                position(servoClosePosition);
-            }
-
-            public void home() {
-                position(servoClosePosition);
-            }
-
-            public boolean isBusy() {
-                return false;
-            }
-
-            public void stop() {
-                position(servo.getPosition());
-            }
-        }
-
     }
 
     public class Slide {
@@ -159,87 +35,106 @@ public class Lift {
             initHardware();
         }
 
+        public int liftHomeHeight = 15;
+        public int liftMaxHeight = 5000;
+        public int slidePower  = 0;
+        public int targetPosition = liftHomeHeight;
+        public int slidePosition = liftHomeHeight;
+
+
         protected void initHardware() {
             slideMotorCenter = hardwareMap.get(DcMotor.class, "slide");
-            slideMotorCenter.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
             slideMotorCenter.setDirection(DcMotor.Direction.FORWARD);
-            slideMotorCenter.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+            slideMotorCenter.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+            slideMotorCenter.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         }
 
-        public boolean isBusy() {
-            return false;
+//        public class SlideUp implements Action {
+//            private boolean initialized = false;
+//
+//            @Override
+//            public boolean run(@NonNull TelemetryPacket packet) {
+//                if (!initialized) {
+//                    goToTarget(3000, slidePower);
+//                    initialized = true;
+//                }
+//
+//                double pos = slideMotorCenter.getCurrentPosition();
+//                packet.put("liftPos", pos);
+//                if (pos < 3000.0) {
+//                    return true;
+//                } else {
+//                    slideMotorCenter.setPower(0);
+//                    return false;
+//                }
+//            }
+//        }
+//        public Action SlideUp() {
+//            return new SlideUp();
+//        }
+//        public class SlideHome implements Action {
+//            private boolean initialized = false;
+//            public boolean run(@NonNull TelemetryPacket packet) {
+//                if (!initialized) {
+//                    goToTarget(30, slidePower);
+//                    initialized = true;
+//                }
+//
+//                double pos = slideMotorCenter.getCurrentPosition();
+//                packet.put("liftPos", pos);
+//                if (pos > 30) {
+//                    return true;
+//                } else {
+//                    slideMotorCenter.setPower(0);
+//                    return false;
+//                }
+//            }
+//        }
+//        public Action SlideHome() {
+//            return new SlideHome();
+//        }
+
+        public void doSlideStuff(Gamepad gamepad2) {
+            //telemetry.addData("gamepadrightsticky:", gamepad2.right_stick_y);
+            slidePosition = slideMotorCenter.getCurrentPosition();
+
+            //Go up
+            slidePower = 1;
+            if (gamepad2.y) {
+                goToTarget(5000, slidePower);
+            } else if (gamepad2.a) {
+                goToTarget(liftHomeHeight, slidePower);
+            } else if (gamepad2.x) {
+                goToTarget(3000, slidePower);
+            } else if (gamepad2.b) {
+                goToTarget(1200, slidePower);
+            } else {
+                if (gamepad2.left_stick_y > .5) {
+                    targetPosition = slideMotorCenter.getCurrentPosition()-50;
+                    goToTarget(targetPosition, slidePower);
+                } else if (gamepad2.left_stick_y < -.5) {
+                    targetPosition = slideMotorCenter.getCurrentPosition()+50;
+                    goToTarget(targetPosition, slidePower);
+                }
+
+            }
+
+        }
+
+        public void goToTarget(int targetPosition, int motorPower) {
+            telemetry.addData("goToTarget.targetposition", targetPosition);
+            telemetry.addData("goToTarget.motorPower", motorPower);
+            double slideCurrentPosition = slideMotorCenter.getCurrentPosition();
+            //if (slideCurrentPosition > liftHomeHeight && slideCurrentPosition < liftMaxHeight) {
+            if (true) {
+                slideMotorCenter.setTargetPosition(targetPosition);
+                slideMotorCenter.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+                slideMotorCenter.setPower(motorPower);
+            }
         }
 
     }
 
-    public class Claw {
-        public Servo servo;
-
-
-        public Claw() { initHardware(); }
-
-        protected void initHardware() {
-            servo = new Servo();
-        }
-
-        public boolean isBusy() {
-            if (servo.isBusy()) {
-                    return true;
-            }
-            return false;
-        }
-
-        public void stop() {
-            servo.stop();
-        }
-
-        public void close() {
-            allowManualInterrupt = false;
-            servo.close();
-        }
-
-        public void open() {
-            allowManualInterrupt = false;
-            servo.open();
-        }
-
-        public class Servo {
-            private com.qualcomm.robotcore.hardware.Servo servo;
-            private double servoOpenPosition = 0.09;
-            private double servoClosePosition = 0.015;
-
-            public Servo() { //HardwareMap hardwareMap, RobotBase opMode
-                initHardware();
-            }
-
-            protected void initHardware() {
-                servo = hardwareMap.get(com.qualcomm.robotcore.hardware.Servo.class, "frontClaw");
-                close();
-            }
-
-            public void position(double targetPosition) {
-                servo.setPosition(targetPosition);
-            }
-
-            public void open() {
-                position(servoOpenPosition);
-            }
-
-            public void close() {
-                position(servoClosePosition);
-            }
-
-
-            public boolean isBusy() {
-                return false;
-            }
-
-            public void stop() {
-                position(servo.getPosition());
-            }
-        }
-
-    }
 }
 
 

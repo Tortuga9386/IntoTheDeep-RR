@@ -45,81 +45,13 @@ public class RobotBase extends OpMode
     /* Initialize standard Hardware interfaces */
     @Override
     public void init() {
-        //Read calibration constants
-        //new Calibration().readFromFile();
-
-        //1 of 2 >> Initialize sensor bulk read, then after all the hardware maps are set below, enable BulkCachingMode.AUTO
-//        List<LynxModule> hubs = hardwareMap.getAll(LynxModule.class);
 
         //Initialize subsystems
         lift = new Lift(hardwareMap, this);
         sensorHuskyLens = new SensorHuskyLens(hardwareMap, this);
-
-
         //Initialize system
-//        if (INITIALIZE_DRIVE) {
-//            //Only create the requested drive object, may be different for TeleOp, AutoOp
-//            Log.i("RobotBase.driveMethod", "DRIVE_METHOD.toString()");
-//            try {
-                drive = new Drive(hardwareMap, this);
-//            } catch(Exception e) {
-//                Log.i("RobotBase.driveMethod", "Drive failed to initialize");
-//            }
-//        } else {
-//            Log.i("RobotBase.driveMethod", "INITIALIZE_DRIVE FALSE");
-//        }
+        drive = new Drive(hardwareMap, this);
 
-        //Initialize Webcam
-//        if (INITIALIZE_WEBCAM) {
-//            //Only create the requested drive object, may be different for TeleOp, AutoOp
-//            Log.i("RobotBase.driveMethod", DRIVE_METHOD.toString());
-//            try {
-//                switch (WEBCAM_METHOD) {
-//                    case WebcamOpenCV:
-//                        webcam = new WebcamOpenCV(hardwareMap, this);
-//                        break;
-//                    case WebcamTF2023:
-//                        webcam = new WebcamTF2023(hardwareMap, this);
-//                        break;
-//                    default:
-//                        webcam = new WebcamTF2023(hardwareMap, this);
-//                        Log.i("RobotBase.webcamMethod", "FAIL TO DEFAULT: WebcamTF2023");
-//                }
-//            } catch(Exception e) {
-//                Log.i("RobotBase.webcamMethod", "Webcam failed to initialize");
-//            }
-//        } else {
-//            Log.i("RobotBase.webcamMethod", "INITIALIZE_WEBCAM FALSE");
-//        }
-
-//        //Initialize IMU for angles
-//        if (INITIALIZE_IMU) {
-//
-//            try {
-//                //controlHub = new ControlHub(hardwareMap, this);
-//                BNO055IMU.Parameters parameters = new BNO055IMU.Parameters();
-//                parameters.angleUnit            = BNO055IMU.AngleUnit.DEGREES;
-//                parameters.accelUnit           = BNO055IMU.AccelUnit.METERS_PERSEC_PERSEC;
-//                parameters.calibrationDataFile = "BNO055IMUCalibration.json"; // see the calibration sample opmode
-//                parameters.loggingEnabled      = true;
-//                parameters.loggingTag          = "IMU";
-//                parameters.accelerationIntegrationAlgorithm = new JustLoggingAccelerationIntegrator();
-//                //imu = hardwareMap.get(BNO055IMU.class, "imu");
-//
-//                //imu.initialize(parameters);
-//            } catch(Exception e) {
-//                Log.i("RobotBase.IMU", "IMU failed to initialize");
-//            }
-//        }
-//
-//        try {
-//            //2 of 2 >> All the hardware maps are set above, now enable BulkCachingMode.AUTO on hubs
-//            for (LynxModule hub : hubs) {
-//                hub.setBulkCachingMode(LynxModule.BulkCachingMode.AUTO);
-//            }
-//        } catch(Exception e) {
-//            Log.i("RobotBase.IMU", "IMU bulk cache mode failed to initialize");
-//        }
     }
 
     @Override
@@ -133,7 +65,6 @@ public class RobotBase extends OpMode
 
     public void loop() {
         //Do nothing, use these classes in the opModes
-
     }
 
     /*
@@ -142,10 +73,6 @@ public class RobotBase extends OpMode
     @Override
     public void stop() {
 
-    }
-
-    String formatAngle(AngleUnit angleUnit, double angle) {
-        return formatDegrees(AngleUnit.DEGREES.fromUnit(angleUnit, angle));
     }
 
     String formatDegrees(double degrees){

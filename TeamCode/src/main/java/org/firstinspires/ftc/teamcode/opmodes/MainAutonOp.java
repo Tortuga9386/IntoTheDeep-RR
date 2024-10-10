@@ -124,8 +124,6 @@ public class MainAutonOp extends RobotBase {
 
             case IDLE:
             default:
-//                intake.roller.stop();
-//                score.roller.stop();
                 break;
         }
         return state;

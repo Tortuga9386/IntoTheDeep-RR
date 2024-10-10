@@ -28,6 +28,14 @@ public class Drive {
     public boolean turtleMode = false;
     public double  turtleFactor = 1;
 
+    //teokstjeosrjoeirjoianowaieoiwajewa
+    public double twist = 0;
+    public double gobacktotheshadow;
+    public boolean backlock;
+    public double timelimit = 0;
+    public boolean turnlock = false;
+    public boolean helpwheredoigo;
+
     private final ElapsedTime time = new ElapsedTime();
 
     public Drive(HardwareMap hardwareMap, RobotBase opMode) {
@@ -64,11 +72,15 @@ public class Drive {
         } catch (Exception e){
             Log.v("Drive", ":rightRearMotor init failed");
         }
+        leftFrontMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        leftRearMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        rightFrontMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        rightRearMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
     }
 
     public void driveFromGamepad(Gamepad gamepad) {
 
-        double deadZone = 0.1;
+        double deadZone = 0.001;
 
         double forward  = 0;
         if (Math.abs(gamepad.left_stick_y) > deadZone) {
@@ -84,10 +96,51 @@ public class Drive {
         Log.v("Drive", "left_stick_x:"+gamepad.left_stick_x);
         Log.v("Drive", "strafe:"+strafe);
 
-        double twist  = 0;
-        if (Math.abs(gamepad.right_stick_x) > deadZone) {
-            twist = -(gamepad.right_stick_x * turtleFactor)/2;
+        //easier for driver stuff
+        if (gamepad.right_stick_button) {
+            backlock = true;
+            gobacktotheshadow = System.currentTimeMillis()+200;
+            helpwheredoigo = true;
         }
+        if (gamepad.left_stick_button) {
+            backlock = true;
+            gobacktotheshadow = System.currentTimeMillis()+200;
+            helpwheredoigo = false;
+        }
+        if (backlock == true) {
+            if (System.currentTimeMillis() < gobacktotheshadow) {
+                forward = 0.75; //backing up
+            }
+            else {
+                backlock = false;
+                turnlock = true;
+                timelimit = System.currentTimeMillis()+400; //turn amount
+            }
+        }
+        if (turnlock == true) {
+            if (System.currentTimeMillis() < timelimit) {
+                if (helpwheredoigo == true) {
+                    twist = -0.75;
+                }
+                if (helpwheredoigo == false) {
+                    twist = 0.75;
+                }
+            }
+            else {
+                turnlock = false;
+            }
+        }
+        if (backlock == false) {
+            if (turnlock == false) {
+                twist = 0;
+                if (Math.abs(gamepad.right_stick_x) > deadZone) {
+                    twist = -(gamepad.right_stick_x * turtleFactor);
+                }
+            }
+        }
+
+
+
         Log.v("Drive", "right_stick_x:"+gamepad.right_stick_x);
         Log.v("Drive", "twist:"+twist);
 
@@ -118,11 +171,6 @@ public class Drive {
         rightFrontMotor.setPower(speeds[1]);
         leftRearMotor.setPower(speeds[2]);
         rightRearMotor.setPower(speeds[3]);
-    }
-
-    public void turn() {
-        //time = new ElapsedTime();
-
     }
 
     public void turtleToggle() {
