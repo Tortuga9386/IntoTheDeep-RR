@@ -9,8 +9,8 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import org.firstinspires.ftc.teamcode.MecanumDrive;
 import org.firstinspires.ftc.teamcode.tuning.TuningOpModes;
 
-@Autonomous(name="2) RIGHT", group = "auto")
-public final class AutonOpBlueREDright extends LinearOpMode {
+@Autonomous(name="2) RIGHT DELAYED", group = "auto")
+public final class AutonOpBlueREDright_DELAYED extends LinearOpMode {
 
     double SOUTH = Math.PI;
     double EAST = 3 * Math.PI / 2;
@@ -27,6 +27,7 @@ public final class AutonOpBlueREDright extends LinearOpMode {
 
             Actions.runBlocking(
                     drive.actionBuilder(beginPose)
+                            .waitSeconds(4.5)
                             .splineToConstantHeading(new Vector2d(4, -29), WEST) //spline out to the sub
                             .waitSeconds(2) //back up from the sub
                             .lineToYConstantHeading(-35)//back up from the sub

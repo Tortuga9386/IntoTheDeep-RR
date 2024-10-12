@@ -94,7 +94,7 @@ public class MainTeleOp extends RobotBase
 
         //
         //slidePosition
-        drive.turtleFactor = (1-gamepad1.right_trigger*0.5);
+        drive.turtleFactor = (1 - 0.75 * lift.slide.slideMotorCenter.getCurrentPosition() / 5000);
 //        telemetry.addData("turtleFactor:", drive.turtleFactor);
         drive.driveFromGamepad(gamepad1);
     }

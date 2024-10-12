@@ -109,11 +109,11 @@ public class Lift {
             } else if (gamepad2.b) {
                 goToTarget(1200, slidePower);
             } else {
-                if (gamepad2.left_stick_y > .5) {
-                    targetPosition = slideMotorCenter.getCurrentPosition()-50;
+                if (gamepad2.left_stick_y > .25) {
+                    targetPosition = slideMotorCenter.getCurrentPosition()-20;
                     goToTarget(targetPosition, slidePower);
-                } else if (gamepad2.left_stick_y < -.5) {
-                    targetPosition = slideMotorCenter.getCurrentPosition()+50;
+                } else if (gamepad2.left_stick_y < -.25) {
+                    targetPosition = slideMotorCenter.getCurrentPosition()+20;
                     goToTarget(targetPosition, slidePower);
                 }
 

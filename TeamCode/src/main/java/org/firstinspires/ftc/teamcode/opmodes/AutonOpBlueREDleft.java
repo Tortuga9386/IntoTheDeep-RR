@@ -10,7 +10,7 @@ import org.firstinspires.ftc.teamcode.MecanumDrive;
 import org.firstinspires.ftc.teamcode.tuning.TuningOpModes;
 
 @Autonomous(name="2) RIGHT", group = "auto")
-public final class AutonOpBlueREDright extends LinearOpMode {
+public final class AutonOpBlueREDleft extends LinearOpMode {
 
     double SOUTH = Math.PI;
     double EAST = 3 * Math.PI / 2;
