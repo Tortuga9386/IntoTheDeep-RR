@@ -1,30 +1,9 @@
 package org.firstinspires.ftc.teamcode.opmodes;
 
-import static org.firstinspires.ftc.robotcore.external.BlocksOpModeCompanion.telemetry;
 
-
-import com.acmerobotics.dashboard.FtcDashboard;
-import com.acmerobotics.dashboard.telemetry.TelemetryPacket;
-import com.acmerobotics.roadrunner.Action;
-import com.acmerobotics.roadrunner.InstantAction;
-import com.acmerobotics.roadrunner.SequentialAction;
-import com.acmerobotics.roadrunner.SleepAction;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
-import com.qualcomm.robotcore.hardware.DcMotor;
-import com.qualcomm.robotcore.hardware.DistanceSensor;
-import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
-import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
-import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;
-import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
-import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
-import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
-import org.firstinspires.ftc.robotcore.external.navigation.Position;
-import org.firstinspires.ftc.robotcore.external.navigation.Velocity;
-
-import java.util.ArrayList;
-import java.util.List;
 
 @TeleOp(name="***TeleOp***", group="teleop")
 public class MainTeleOp extends RobotBase
@@ -52,6 +31,7 @@ public class MainTeleOp extends RobotBase
      */
     @Override
     public void init_loop() {
+
     }
 
     /*
@@ -82,19 +62,20 @@ public class MainTeleOp extends RobotBase
 
 
     protected void lift_loop() {
-        lift.slide.doSlideStuff(gamepad2);
+        lift.liftSlide.doSlideStuff(gamepad2);
 //        telemetry.addData("GP2.left_stick_y:", gamepad2.left_stick_y);
 //        telemetry.addData("GP2.a:", gamepad2.a);
 //        telemetry.addData("GP2.b:", gamepad2.b);
 //        telemetry.addData("GP2.x:", gamepad2.x);
 //        telemetry.addData("GP2.y:", gamepad2.y);
+          telemetry.addData("encoder", lift.liftSlide.liftMotor.getCurrentPosition());
     }
 
     protected void drive_loop() {
 
         //
         //slidePosition
-        drive.turtleFactor = (1 - 0.75 * lift.slide.slideMotorCenter.getCurrentPosition() / 5000);
+        drive.turtleFactor = (1 - 0.75 * lift.liftSlide.liftMotor.getCurrentPosition() / 5000);
 //        telemetry.addData("turtleFactor:", drive.turtleFactor);
         drive.driveFromGamepad(gamepad1);
     }

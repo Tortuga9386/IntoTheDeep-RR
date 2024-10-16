@@ -28,10 +28,12 @@ public final class AutonOpBlueREDright extends LinearOpMode {
             Actions.runBlocking(
                     drive.actionBuilder(beginPose)
                             .splineToConstantHeading(new Vector2d(4, -29), WEST) //spline out to the sub
-                            .waitSeconds(2) //back up from the sub
+                            //lift up
+                            //.waitSeconds(2)
+                            //lift down
                             .lineToYConstantHeading(-35)//back up from the sub
                             .splineToConstantHeading(new Vector2d(36,-24 ), WEST)
-                            .turnTo(NORTH)
+                            .turnTo(NORTH) //turn 90 degrease
                             .lineToXConstantHeading(46)//captures first block
                             .turnTo(EAST)
                             .splineToConstantHeading(new Vector2d(48, -60), EAST) // pushes the the first block
