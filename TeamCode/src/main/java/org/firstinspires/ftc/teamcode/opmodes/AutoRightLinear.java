@@ -58,7 +58,6 @@ public class AutoRightLinear extends LinearOpMode {
 //            telemetry.addData("Position during Init", position);
 //            telemetry.update();
 //        }
-
 //        int startPosition = visionOutputPosition;
 //        telemetry.addData("Starting Position", startPosition);
 //        telemetry.update();

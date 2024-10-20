@@ -4,6 +4,8 @@ package org.firstinspires.ftc.teamcode.opmodes;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
+import org.firstinspires.ftc.teamcode.subsystems.Lift;
+
 
 @TeleOp(name="***TeleOp***", group="teleop")
 public class MainTeleOp extends RobotBase
@@ -63,6 +65,8 @@ public class MainTeleOp extends RobotBase
 
     protected void lift_loop() {
         lift.liftSlide.doSlideStuff(gamepad2);
+        lift.intakeSlide.doIntakeSlideStuff(gamepad2);
+        lift.intakeClaw.doIntakeClawStuff(gamepad2);
 //        telemetry.addData("GP2.left_stick_y:", gamepad2.left_stick_y);
 //        telemetry.addData("GP2.a:", gamepad2.a);
 //        telemetry.addData("GP2.b:", gamepad2.b);

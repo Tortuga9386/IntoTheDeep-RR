@@ -3,6 +3,8 @@ package org.firstinspires.ftc.teamcode.subsystems;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.Gamepad;
+import com.qualcomm.robotcore.hardware.Servo;
+
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.Auto.ExampleAuto;
 import org.firstinspires.ftc.teamcode.opmodes.RobotBase;
@@ -12,6 +14,8 @@ public class Lift {
     protected Telemetry telemetry;
     protected RobotBase robotBase;
     public LiftSlide liftSlide;
+    public IntakeSlide intakeSlide;
+    public IntakeClaw intakeClaw;
 
     public Lift(HardwareMap hardwareMap, RobotBase opMode) {
         this.hardwareMap = hardwareMap;
@@ -26,6 +30,8 @@ public class Lift {
 
     protected void initHardware() {
         liftSlide = new LiftSlide();
+        intakeSlide = new IntakeSlide();
+        intakeClaw = new IntakeClaw();
     }
 
     public class LiftSlide {
@@ -57,18 +63,20 @@ public class Lift {
             //Go up
             slidePower = 1.0;
             if (gamepad2.y) {
-                goToTarget(3500, slidePower);
+                goToTarget(4000, slidePower);//highbasket
             } else if (gamepad2.a) {
-                goToTarget(liftHomeHeight, slidePower);
+                goToTarget(0, slidePower);//home
             } else if (gamepad2.x) {
-                goToTarget(3000, slidePower);
+                goToTarget(1390, slidePower);//highchamber
             } else if (gamepad2.b) {
-                goToTarget(1200, slidePower);
+                goToTarget(300, slidePower);//floor pick up position
+            } else if (gamepad2.dpad_left) {
+                goToTarget(770, slidePower);//score specimen
             } else {
-                if (gamepad2.left_stick_y > .25) {
+                if (gamepad2.left_stick_y > .1) {
                     targetPosition = liftMotor.getCurrentPosition()-20;
                     goToTarget(targetPosition, slidePower);
-                } else if (gamepad2.left_stick_y < -.25) {
+                } else if (gamepad2.left_stick_y < -.1) {
                     targetPosition = liftMotor.getCurrentPosition()+20;
                     goToTarget(targetPosition, slidePower);
                 }
@@ -78,8 +86,8 @@ public class Lift {
         }
 
         public void goToTarget(int targetPosition, double motorPower) {
-            telemetry.addData("goToTarget.targetposition", targetPosition);
-            telemetry.addData("goToTarget.motorPower", motorPower);
+            //telemetry.addData("goToTarget.targetposition", targetPosition);
+            //telemetry.addData("goToTarget.motorPower", motorPower);
             double slideCurrentPosition = liftMotor.getCurrentPosition();
             //if (slideCurrentPosition > liftHomeHeight && slideCurrentPosition < liftMaxHeight) {
             if (true) {
@@ -90,6 +98,97 @@ public class Lift {
         }
 
     }
+
+    public class IntakeSlide {
+
+        public DcMotor intakeliftMotor;
+
+        public IntakeSlide() { //HardwareMap hardwareMap, RobotBase opMode
+            initHardware();
+        }
+
+        public int liftHomeHeight = 15;
+        public int liftMaxHeight = 5000;
+        public double intakeslidePower  = 0;
+        public int targetPosition = liftHomeHeight;
+        public int slidePosition = liftHomeHeight;
+
+
+        protected void initHardware() {
+            intakeliftMotor = hardwareMap.get(DcMotor.class, "bridge");
+            intakeliftMotor.setDirection(DcMotor.Direction.REVERSE);
+            intakeliftMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+            intakeliftMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+
+        }
+
+        public void doIntakeSlideStuff(Gamepad gamepad2) {
+            //telemetry.addData("gamepadrightsticky:", gamepad2.right_stick_y);
+            slidePosition = intakeliftMotor.getCurrentPosition();
+
+            //Go forward
+            intakeslidePower = 0.5;
+                 if (gamepad2.dpad_up) {
+                     goToTarget(5000, intakeslidePower);//down
+                 } else if (gamepad2.dpad_down) {
+                goToTarget(0, intakeslidePower);//up
+            } else {
+                if (gamepad2.right_stick_y > .1) {
+                    targetPosition = intakeliftMotor.getCurrentPosition()-100;
+                    goToTarget(targetPosition, intakeslidePower);
+                } else if (gamepad2.right_stick_y < -.1) {
+                    targetPosition = intakeliftMotor.getCurrentPosition()+100;
+                    goToTarget(targetPosition, intakeslidePower);
+                }
+
+            }
+
+        }
+
+        public void goToTarget(int targetPosition, double motorPower) {
+            //telemetry.addData("goToTarget.targetpositionintake", targetPosition);
+            //telemetry.addData("goToTarget.motorPowerintake", motorPower);
+            double slideCurrentPosition = intakeliftMotor.getCurrentPosition();
+            //if (slideCurrentPosition > liftHomeHeight && slideCurrentPosition < liftMaxHeight) {
+            if (true) {
+                intakeliftMotor.setTargetPosition(targetPosition);
+                intakeliftMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+                intakeliftMotor.setPower(motorPower);
+            }
+        }
+
+    }
+
+    public class IntakeClaw {
+
+        public Servo intakeClaw;
+
+        public IntakeClaw() { //HardwareMap hardwareMap, RobotBase opMode
+            initHardware();
+        }
+
+//        public int liftHomeHeight = 15;
+//        public int liftMaxHeight = 5000;
+//        public double intakeslidePower  = 0;
+//        public int targetPosition = liftHomeHeight;
+//        public int slidePosition = liftHomeHeight;
+
+
+        protected void initHardware() {
+            intakeClaw = hardwareMap.get(Servo.class, "frontclaw");
+        }
+
+        public void doIntakeClawStuff(Gamepad gamepad2) {
+            //telemetry.addData("gamepadrightsticky:", gamepad2.right_stick_y);
+            //slidePosition = intakeliftMotor.getCurrentPosition();
+            intakeClaw.setPosition(0.5+gamepad2.right_trigger * 0.15);
+
+            }
+        }
+
+
+
+
 
 //    public class IntakeSlide {
 //
