@@ -73,6 +73,7 @@ public class MainTeleOp extends RobotBase
 //        telemetry.addData("GP2.x:", gamepad2.x);
 //        telemetry.addData("GP2.y:", gamepad2.y);
           telemetry.addData("encoder", lift.liftSlide.liftMotor.getCurrentPosition());
+          telemetry.addData("encoderslide", lift.intakeSlide.intakeliftMotor.getCurrentPosition());
     }
 
     protected void drive_loop() {
@@ -80,6 +81,7 @@ public class MainTeleOp extends RobotBase
         //
         //slidePosition
         drive.turtleFactor = (1 - 0.75 * lift.liftSlide.liftMotor.getCurrentPosition() / 5000);
+
 //        telemetry.addData("turtleFactor:", drive.turtleFactor);
         drive.driveFromGamepad(gamepad1);
     }

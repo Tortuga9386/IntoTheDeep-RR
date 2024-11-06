@@ -1,10 +1,11 @@
 package org.firstinspires.ftc.teamcode.opmodes;
 
+import android.util.Log;
+
 import androidx.annotation.NonNull;
 
 import com.acmerobotics.dashboard.telemetry.TelemetryPacket;
 import com.acmerobotics.roadrunner.Action;
-import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.Servo;
@@ -15,17 +16,39 @@ public class ActionLib {
 
     }
 
+    static int motorPrecision = 50;
+    static double servoPrecision = 0.001;
+
+//////////////////////////////////////////////////////////////////////////
+///  ROBOT LIFT
+//////////////////////////////////////////////////////////////////////////
+
     public static class RobotLift {
         private DcMotor lift;
+        private boolean quitter = true;
 
         public RobotLift(HardwareMap hardwareMap) {
             lift = hardwareMap.get(DcMotor.class, "lift");
             lift.setDirection(DcMotor.Direction.FORWARD);
+            lift.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
             lift.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
             lift.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         }
 
-        public class LiftUp implements Action {
+        public void disableLiftHold() {
+            quitter = true;
+        }
+
+        public void goToTarget(int targetPosition, double motorPower) {
+            double slideCurrentPosition = lift.getCurrentPosition();
+            if (true) {
+                lift.setTargetPosition(targetPosition);
+                lift.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+                lift.setPower(motorPower);
+            }
+        }
+
+        public class ActionLiftUp implements Action {
             private boolean initialized = false;
 
             @Override
@@ -46,82 +69,213 @@ public class ActionLib {
                 }
             }
         }
-        public Action liftUp() {
-            return new LiftUp();
-        }
-        public class LiftSpecimen implements Action {
+        public Action actionLiftUp() { return new ActionLiftUp(); }
+
+        public class ActionLiftDown implements Action {
             private boolean initialized = false;
 
             @Override
             public boolean run(@NonNull TelemetryPacket packet) {
+                int targetPosition = 0;
 
-                if (!initialized) {
-                    lift.setPower(0.5);
-                    initialized = true;
-                }
-
-                double pos = lift.getCurrentPosition();
-                packet.put("liftPos", pos);
-                if (pos < 1200.0) {
+                double currentPosition = lift.getCurrentPosition();
+                packet.put("liftPos", currentPosition);
+                if ((Math.abs(targetPosition - currentPosition) > motorPrecision) || !quitter) {
+                    goToTarget(targetPosition,0.5);
                     return true;
                 } else {
-                    lift.setPower(0);
-                    return false;
+                    if (quitter) {
+                        quitter = true;
+                        return false;
+                    }
+                    return true;
                 }
             }
         }
-        public Action liftSpecimen() {
-            return new LiftSpecimen();
+        public Action actionLiftDown(){
+            return new ActionLiftDown();
         }
-        public class LiftDown implements Action {
+
+        public class ActionLiftSpecimen implements Action {
+
+            @Override
+            public boolean run(@NonNull TelemetryPacket packet) {
+                Log.v("ActionLiftSpecimen", "START/////////////////////////////////////////////////////////////////");
+                int targetPosition = 1390;
+
+                double currentPosition = lift.getCurrentPosition();
+                packet.put("liftPos", currentPosition);
+                if ((Math.abs(targetPosition - currentPosition) > motorPrecision) || !quitter) {
+                    Log.v("ActionLiftSpecimen", "RUNNING//////targetPosition"+targetPosition+ " vs currentPosition"+currentPosition+"////////////////////////////////////////");
+                    Log.v("ActionLiftSpecimen", "RUNNING//////testVal:"+Math.abs(targetPosition - currentPosition)+" > 50///////////////////////////////////////");
+                    goToTarget(targetPosition,0.5);
+                    return true;
+                } else {
+                    if (quitter) {
+                        quitter = true;
+                        Log.v("ActionLiftSpecimen", "FINISH//////I QUIT!!!!////////////////////////////////////////");
+                        Log.v("ActionLiftSpecimen", "FINISH//////testVal:"+Math.abs(targetPosition - currentPosition)+" < 50///////////////////////////////////////");
+                        Log.v("ActionLiftSpecimen", "FINISH//////////////////////////////////////////////////////////////////");
+                        return false;
+                    }
+                    Log.v("ActionLiftSpecimen", "FINISH//////ON TARGET BUT NOT A QUITTER!////////////////////////////////////////");
+                    Log.v("ActionLiftSpecimen", "FINISH//////testVal:"+Math.abs(targetPosition - currentPosition)+" < 50///////////////////////////////////////");
+                    Log.v("ActionLiftSpecimen", "FINISH//////////////////////////////////////////////////////////////////");
+                    return true;
+                }
+            }
+        }
+        public Action actionLiftSpecimen() {
+            return new ActionLiftSpecimen();
+        }
+
+        public class ActionLiftScore implements Action {
             private boolean initialized = false;
 
             @Override
             public boolean run(@NonNull TelemetryPacket packet) {
-                if (!initialized) {
-                    lift.setPower(-0.3);
-                    initialized = true;
-                }
+                int targetPosition = 650;
 
-                double pos = lift.getCurrentPosition();
-                packet.put("liftPos", pos);
-                if (pos > 50.0) {
+                double currentPosition = lift.getCurrentPosition();
+                packet.put("liftPos", currentPosition);
+                if ((Math.abs(targetPosition - currentPosition) > motorPrecision) || !quitter) {
+                    goToTarget(targetPosition,0.5);
                     return true;
                 } else {
-                    lift.setPower(0);
-                    return false;
+                    if (quitter) {
+                        quitter = true;
+                        return false;
+                    }
+                    return true;
                 }
             }
         }
-        public Action liftDown(){
-            return new LiftDown();
+        public Action actionliftScore(){ return new ActionLiftScore(); }
+
+        public class ActionClawGrab implements Action {
+            private boolean initialized = false;
+
+            @Override
+            public boolean run(@NonNull TelemetryPacket packet) {
+                Log.v("ActionClawGrab", "START/////////////////////////////////////////////////////////////////");
+                int targetPosition = 240;
+
+                double currentPosition = lift.getCurrentPosition();
+                packet.put("liftPos", currentPosition);
+                if ((Math.abs(targetPosition - currentPosition) > motorPrecision) || !quitter) {
+                    goToTarget(targetPosition,0.7);
+                    Log.v("ActionClawGrab", "RUNNING//////targetPosition"+targetPosition+ " vs currentPosition"+currentPosition+"////////////////////////////////////////");
+                    Log.v("ActionClawGrab", "RUNNING//////testVal:"+Math.abs(targetPosition - currentPosition)+" > 50///////////////////////////////////////");
+                    return true;
+                } else {
+                    if (quitter) {
+                        quitter = true;
+                        Log.v("ActionClawGrab", "FINISH//////I QUIT!!!!////////////////////////////////////////");
+                        Log.v("ActionClawGrab", "FINISH//////testVal:"+Math.abs(targetPosition - currentPosition)+" < 50///////////////////////////////////////");
+                        Log.v("ActionClawGrab", "FINISH//////////////////////////////////////////////////////////////////");
+                        return false;
+                    } else {
+                        Log.v("ActionClawGrab", "FINISH//////ON TARGET BUT NOT A QUITTER!////////////////////////////////////////");
+                        Log.v("ActionClawGrab", "FINISH//////testVal:"+Math.abs(targetPosition - currentPosition)+" < 50///////////////////////////////////////");
+                        Log.v("ActionClawGrab", "FINISH//////////////////////////////////////////////////////////////////");
+                    }
+                    return true;
+                }
+            }
         }
+        public Action actionClawGrab(){ return new ActionClawGrab(); }
+
+        public class ActionLiftToBasket implements Action {
+            private boolean initialized = false;
+
+            @Override
+            public boolean run(@NonNull TelemetryPacket packet) {
+                Log.v("ActionLiftToBasket", "START/////////////////////////////////////////////////////////////////");
+                int targetPosition = 4000;
+
+                double currentPosition = lift.getCurrentPosition();
+                packet.put("liftPos", currentPosition);
+                if ((Math.abs(targetPosition - currentPosition) > motorPrecision) || !quitter) {
+                    goToTarget(targetPosition,0.7);
+                    Log.v("ActionLiftToBasket", "RUNNING//////targetPosition"+targetPosition+ " vs currentPosition"+currentPosition+"////////////////////////////////////////");
+                    Log.v("ActionLiftToBasket", "RUNNING//////testVal:"+Math.abs(targetPosition - currentPosition)+" > 50///////////////////////////////////////");
+                    return true;
+                } else {
+                    if (quitter) {
+                        quitter = true;
+                        Log.v("ActionLiftToBasket", "FINISH//////I QUIT!!!!////////////////////////////////////////");
+                        Log.v("ActionLiftToBasket", "FINISH//////testVal:"+Math.abs(targetPosition - currentPosition)+" < 50///////////////////////////////////////");
+                        Log.v("ActionLiftToBasket", "FINISH//////////////////////////////////////////////////////////////////");
+                        return false;
+                    } else {
+                        Log.v("ActionLiftToBasket", "FINISH//////ON TARGET BUT NOT A QUITTER!////////////////////////////////////////");
+                        Log.v("ActionLiftToBasket", "FINISH//////testVal:"+Math.abs(targetPosition - currentPosition)+" < 50///////////////////////////////////////");
+                        Log.v("ActionLiftToBasket", "FINISH//////////////////////////////////////////////////////////////////");
+                    }
+                    return true;
+                }
+            }
+        }
+        public Action actionLiftToBasket(){ return new ActionLiftToBasket(); }
+
+        public class ActionQuitLift implements Action {
+            @Override
+            public boolean run(@NonNull TelemetryPacket packet) {
+                disableLiftHold();
+                return false;
+            }
+        }
+        public Action actionQuitLift(){ return new ActionQuitLift(); }
+
+        public class ActionHoldLift implements Action {
+            @Override
+            public boolean run(@NonNull TelemetryPacket packet) {
+                quitter = false;
+                return false;
+            }
+        }
+        public Action actionHoldLift(){ return new ActionHoldLift(); }
+
     }
+
+//////////////////////////////////////////////////////////////////////////
+///  INTAKE SLIDE
+//////////////////////////////////////////////////////////////////////////
 
     public static class RobotIntakeSlide {
         private DcMotor intakeSlide;
 
         public RobotIntakeSlide(HardwareMap hardwareMap) {
-            intakeSlide = hardwareMap.get(DcMotor.class, "slides");
-            intakeSlide.setDirection(DcMotor.Direction.FORWARD);
+            intakeSlide = hardwareMap.get(DcMotor.class, "bridge");
+            intakeSlide.setDirection(DcMotor.Direction.REVERSE);
             intakeSlide.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
             intakeSlide.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         }
 
-        public class LiftUp implements Action {
+        public void goToTarget(int targetPosition, double motorPower) {
+            double slideCurrentPosition = intakeSlide.getCurrentPosition();
+            if (true) {
+                intakeSlide.setTargetPosition(targetPosition);
+                intakeSlide.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+                intakeSlide.setPower(motorPower);
+            }
+        }
+
+        public class ActionRetract implements Action {
             private boolean initialized = false;
 
             @Override
             public boolean run(@NonNull TelemetryPacket packet) {
+                int targetPosition = 0;
 
                 if (!initialized) {
-                    intakeSlide.setPower(0.5);
+                    goToTarget(targetPosition,0.5);
                     initialized = true;
                 }
 
-                double pos = intakeSlide.getCurrentPosition();
-                packet.put("liftPos", pos);
-                if (pos < 3000.0) {
+                double currentPosition = intakeSlide.getCurrentPosition();
+                packet.put("liftPos", currentPosition);
+                if (Math.abs(targetPosition - currentPosition) > 50) {
                     return true;
                 } else {
                     intakeSlide.setPower(0);
@@ -129,23 +283,25 @@ public class ActionLib {
                 }
             }
         }
-        public Action liftUp() {
-            return new LiftUp();
+        public Action actionRetract() {
+            return new ActionRetract();
         }
 
-        public class LiftDown implements Action {
+        public class ActionReach implements Action {
             private boolean initialized = false;
 
             @Override
             public boolean run(@NonNull TelemetryPacket packet) {
+                int targetPosition = 1150;
+
                 if (!initialized) {
-                    intakeSlide.setPower(-0.5);
+                    goToTarget(targetPosition,0.5);
                     initialized = true;
                 }
 
-                double pos = intakeSlide.getCurrentPosition();
-                packet.put("liftPos", pos);
-                if (pos > 50.0) {
+                double currentPosition = intakeSlide.getCurrentPosition();
+                packet.put("liftPos", currentPosition);
+                if (Math.abs(targetPosition - currentPosition) > 50) {
                     return true;
                 } else {
                     intakeSlide.setPower(0);
@@ -153,10 +309,14 @@ public class ActionLib {
                 }
             }
         }
-        public Action liftDown(){
-            return new LiftDown();
+        public Action actionReach(){
+            return new ActionReach();
         }
     }
+
+//////////////////////////////////////////////////////////////////////////
+///  ROBOT INTAKE
+//////////////////////////////////////////////////////////////////////////
 
     public static class RobotIntakeRotator {
         private Servo intakeRotatorServo;
@@ -217,41 +377,58 @@ public class ActionLib {
 
     }
 
+//////////////////////////////////////////////////////////////////////////
+///  INTAKE CLAW
+//////////////////////////////////////////////////////////////////////////
+
+
     public static class RobotIntakeClaw {
         private Servo intakeClawServo;
-        private double openPosition = 0.7;
-        private double closedPosition = 0.3;
+        private double openPosition = 0.6;
+        private double closedPosition = 0.45;
 
         public RobotIntakeClaw(HardwareMap hardwareMap) {
-            intakeClawServo = hardwareMap.get(com.qualcomm.robotcore.hardware.Servo.class, "clawServo");
-            intakeClawServo.setDirection(com.qualcomm.robotcore.hardware.Servo.Direction.REVERSE);
+            intakeClawServo = hardwareMap.get(com.qualcomm.robotcore.hardware.Servo.class, "frontclaw");
+            intakeClawServo.setDirection(Servo.Direction.FORWARD);
         }
 
-        public class ClawOpen implements Action {
+        public void clawOpen() {
+            intakeClawServo.setPosition(openPosition);
+        }
+        public void clawClose() {
+            intakeClawServo.setPosition(closedPosition);
+        }
+
+        public class ActionClawOpen implements Action {
             private boolean initialized = false;
 
             @Override
             public boolean run(@NonNull TelemetryPacket packet) {
+                Log.v("ActionClawOpen", "START/////////////////////////////////////////////////////////////////");
 
                 if (!initialized) {
                     intakeClawServo.setPosition(openPosition);
                     initialized = true;
                 }
 
-                double pos = intakeClawServo.getPosition();
-                packet.put("clawPos", pos);
-                if (pos >= openPosition) {
+                double currentPosition = intakeClawServo.getPosition();
+                packet.put("clawPos", currentPosition);
+                if (Math.abs(openPosition - currentPosition) > servoPrecision) {
+                    intakeClawServo.setPosition(openPosition);
+//                    Log.v("ActionClawGrab", "RUNNING//////targetPosition"+openPosition+ " vs currentPosition"+currentPosition+"////////////////////////////////////////");
+//                    Log.v("ActionClawGrab", "RUNNING//////testVal:"+Math.abs(openPosition - currentPosition)+" > 50///////////////////////////////////////");
                     return true;
                 } else {
-                    return false;
+                  return false;
                 }
+
             }
         }
-        public Action clawOpen() {
-            return new ClawOpen();
+        public Action actionClawOpen() {
+            return new ActionClawOpen();
         }
 
-        public class ClawClosed implements Action {
+        public class ActionClawClose implements Action {
             private boolean initialized = false;
 
             @Override
@@ -261,17 +438,20 @@ public class ActionLib {
                     initialized = true;
                 }
 
-                double pos = intakeClawServo.getPosition();
-                packet.put("clawPos", pos);
-                if (pos <= closedPosition) {
+                double currentPosition = intakeClawServo.getPosition();
+                packet.put("clawPos", currentPosition);
+                if (Math.abs(closedPosition - currentPosition) > servoPrecision) {
+                    intakeClawServo.setPosition(closedPosition);
+//                    Log.v("ActionClawGrab", "RUNNING//////targetPosition"+openPosition+ " vs currentPosition"+currentPosition+"////////////////////////////////////////");
+//                    Log.v("ActionClawGrab", "RUNNING//////testVal:"+Math.abs(openPosition - currentPosition)+" > 50///////////////////////////////////////");
                     return true;
                 } else {
                     return false;
                 }
             }
         }
-        public Action clawClosed(){
-            return new ClawClosed();
+        public Action actionClawClose(){
+            return new ActionClawClose();
         }
 
     }

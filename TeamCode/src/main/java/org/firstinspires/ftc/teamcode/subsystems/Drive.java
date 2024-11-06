@@ -36,6 +36,9 @@ public class Drive {
     public boolean turnlock = false;
     public boolean helpwheredoigo;
 
+    //mods
+    public double turnFactor = 1;
+
     private final ElapsedTime time = new ElapsedTime();
 
     public Drive(HardwareMap hardwareMap, RobotBase opMode) {
@@ -134,7 +137,7 @@ public class Drive {
             if (turnlock == false) {
                 twist = 0;
                 if (Math.abs(gamepad.right_stick_x) > deadZone) {
-                    twist = -(gamepad.right_stick_x * turtleFactor);
+                    twist = -((gamepad.right_stick_x * 0.75) * turtleFactor);
                 }
             }
         }

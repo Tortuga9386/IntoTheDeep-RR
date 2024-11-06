@@ -28,14 +28,16 @@ public class AutoRightLinear extends LinearOpMode {
         ActionLib.RobotLift             lift            = new ActionLib.RobotLift(hardwareMap);
 //        ActionLib.RobotIntakeSlide      intakeSlide     = new ActionLib.RobotIntakeSlide(hardwareMap);
 //        ActionLib.RobotIntakeRotator    intakeRotator   = new ActionLib.RobotIntakeRotator(hardwareMap);
-//        ActionLib.RobotIntakeClaw       intakeClaw      = new ActionLib.RobotIntakeClaw(hardwareMap);
+        ActionLib.RobotIntakeClaw       intakeClaw      = new ActionLib.RobotIntakeClaw(hardwareMap);
+
+        //Init robot position
+        intakeClaw.clawClose();
 
         TrajectoryActionBuilder rightPathToSub = drive.actionBuilder(initialPose)
-                .splineToConstantHeading(new Vector2d(4, -29), WEST); //spline out to the sub
+                .splineToConstantHeading(new Vector2d(6, -32.75), WEST); //spline out to the sub
 
         TrajectoryActionBuilder rightPathDropSamples = drive.actionBuilder(initialPose)
-                //weojoawej delete this later maybe [DOWN ARROW]
-                .waitSeconds(2)
+                .waitSeconds(0.5)
                 .splineToConstantHeading(new Vector2d(24,-48), WEST) //backs up from sub
                 .waitSeconds(0.01)
                 .splineToConstantHeading(new Vector2d(36,-24 ), WEST)
@@ -48,37 +50,38 @@ public class AutoRightLinear extends LinearOpMode {
                 .waitSeconds(0.01)
                 .strafeToConstantHeading(new Vector2d(54,-60)) //pushes the second block into the zone
                 .lineToY(-12)
-                .strafeToConstantHeading(new Vector2d(62, -12)) //strafe aiming for the third block
+                .strafeToConstantHeading(new Vector2d(61.0, -12)) //strafe aiming for the third block
                 .waitSeconds(0.01)
                 .turnTo(EAST)
-                .strafeToConstantHeading(new Vector2d(61.5,-60)); //pushes the third block into the zone
+                .strafeToConstantHeading(new Vector2d(60,-60)); //pushes the third block into the zone
 
-//        while (!isStopRequested() && !opModeIsActive()) {
-//            int position = visionOutputPosition;
-//            telemetry.addData("Position during Init", position);
-//            telemetry.update();
-//        }
-//        int startPosition = visionOutputPosition;
-//        telemetry.addData("Starting Position", startPosition);
-//        telemetry.update();
-        waitForStart();
-        if (isStopRequested()) return;
+        TrajectoryActionBuilder wait = drive.actionBuilder(initialPose)
+                .waitSeconds(0.5);
 
         Action trajectoryActionToSub = rightPathToSub.build();
         Action trajectoryActionDropSamples = rightPathDropSamples.build();
+        Action trajectoryWait = rightPathDropSamples.build();
+
+        telemetry.addData("Status", "> INIT");
+        telemetry.update();
+
+        waitForStart();
+        if (isStopRequested()) return;
 
         Actions.runBlocking(
-                new SequentialAction(
-                        new ParallelAction(
-                                trajectoryActionToSub,
-                                new SequentialAction(
-                                        lift.liftSpecimen()
-                                )
-                        ),
-                        lift.liftDown(),
-                        //open claw
-                        trajectoryActionDropSamples
+            new SequentialAction(
+                new ParallelAction(
+                    trajectoryActionToSub,
+                    new SequentialAction( lift.actionLiftSpecimen() )
+                ),
+                lift.actionliftScore(),
+                intakeClaw.actionClawOpen(),
+                lift.actionLiftDown(),
+                new ParallelAction(
+                    trajectoryActionDropSamples,
+                    new SequentialAction( lift.actionLiftDown() )
                 )
+            )
         );
     }
 }
