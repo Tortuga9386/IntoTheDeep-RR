@@ -67,6 +67,7 @@ public class MainTeleOp extends RobotBase
         lift.liftSlide.doSlideStuff(gamepad2);
         lift.intakeSlide.doIntakeSlideStuff(gamepad2);
         lift.intakeClaw.doIntakeClawStuff(gamepad2);
+        lift.intakelinkage.doIntakeLinkageStuff(gamepad2);
 //        telemetry.addData("GP2.left_stick_y:", gamepad2.left_stick_y);
 //        telemetry.addData("GP2.a:", gamepad2.a);
 //        telemetry.addData("GP2.b:", gamepad2.b);
@@ -74,6 +75,7 @@ public class MainTeleOp extends RobotBase
 //        telemetry.addData("GP2.y:", gamepad2.y);
           telemetry.addData("encoder", lift.liftSlide.liftMotor.getCurrentPosition());
           telemetry.addData("encoderslide", lift.intakeSlide.intakeliftMotor.getCurrentPosition());
+          telemetry.addData("linkage pos",lift.intakelinkage.intakeLinkage.getPosition());
     }
 
     protected void drive_loop() {
