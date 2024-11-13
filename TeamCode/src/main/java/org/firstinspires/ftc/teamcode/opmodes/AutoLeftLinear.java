@@ -33,15 +33,17 @@ public class AutoLeftLinear extends LinearOpMode {
     @Override
     public void runOpMode() {
         Pose2d initialPose = new Pose2d(-29.5, -65, WEST);
+        Vector2d destinationVector;
         MecanumDrive drive = new MecanumDrive(hardwareMap, initialPose);
         ActionLib.RobotLift             lift            = new ActionLib.RobotLift(hardwareMap);
         ActionLib.RobotIntakeSlide      intakeSlide     = new ActionLib.RobotIntakeSlide(hardwareMap);
-//        ActionLib.RobotIntakeRotator    intakeRotator   = new ActionLib.RobotIntakeRotator(hardwareMap);
         ActionLib.RobotIntakeClaw       intakeClaw      = new ActionLib.RobotIntakeClaw(hardwareMap);
         ActionLib.RobotIntakeLinkage    intakeLinkage   = new ActionLib.RobotIntakeLinkage(hardwareMap);
 
         //Init robot position
         intakeClaw.clawClose();
+        //intakeClaw.extendTheFinger();
+        //intakeClaw.retractFinger();
 //        intakeLinkage.linkageOut();
 
         //////////////////////////////////////////////////////////////////////////////////////////////////
@@ -64,70 +66,92 @@ public class AutoLeftLinear extends LinearOpMode {
         initialPose = new Pose2d(-48, -47, WEST);
         TrajectoryActionBuilder pathSampleOneClose = drive.actionBuilder(initialPose)
                 .strafeToConstantHeading(new Vector2d(-48, -43)); //strafe to the first sample - close
-                //.waitSeconds(0.1);
         Action trajectorySampleOneClose      = pathSampleOneClose.build();
 
         ////////////////////////////////////////////////////////////////////////////////////////////////////
         //Go to the scoring basket - near 1
         initialPose = new Pose2d(-48, -43, WEST);
-
+        Vector2d thaPose = initialPose.position;
         VelConstraint baseVelConstraint = new MinVelConstraint(Arrays.asList(
-                new TranslationalVelConstraint(20.0),
-                new AngularVelConstraint(1.50))
+                new TranslationalVelConstraint(30.0),
+                new AngularVelConstraint(3.0))
         );
 
         TrajectoryActionBuilder pathBasketNear1 = drive.actionBuilder(initialPose)
-//            .splineToSplineHeading(new Pose2d(-50,-50, WEST), SOUTHEAST) //first basket
-
-                .strafeToLinearHeading(new Vector2d(-50, -50), SOUTHEAST, baseVelConstraint)
-            //.splineTo(new Vector2d(-50, -50), SOUTHEAST, baseVelConstraint)
-//                    new TranslationalVelConstraint(10.0),
-//                    new ProfileAccelConstraint(-10.0, 10.0))
-            .waitSeconds(0.1);
+            .strafeToLinearHeading(new Vector2d(-50, -50), SOUTHEAST, baseVelConstraint);
         Action trajectoryPathBasketNear1      = pathBasketNear1.build();
-
-        //////////////////////////////////////////////////////////////////////////////////////////////////
-//        //Go to the scoring basket - near 2
-//        initialPose = new Pose2d(-50, -50, WEST);
-//        TrajectoryActionBuilder pathBasketNear2 = drive.actionBuilder(initialPose)
-//                .splineTo(new Vector2d(-50,-50), SOUTHEAST);
-//        Action trajectoryPathBasketNear2      = pathBasketNear2.build();
 
         //////////////////////////////////////////////////////////////////////////////////////////////////
         //Go to the scoring basket - close
         initialPose = new Pose2d(-50, -50, SOUTHEAST);
         TrajectoryActionBuilder pathBasketClose = drive.actionBuilder(initialPose)
-                .strafeToConstantHeading(new Vector2d(-55.5, -55.5)) //Move into scoring position
-                .waitSeconds(0.1);
+                .strafeToConstantHeading(new Vector2d(-55.0, -57.0)); //Move into scoring position
         Action trajectoryPathBasketClose      = pathBasketClose.build();
 
         //////////////////////////////////////////////////////////////////////////////////////////////////
         //Back up from the scoring basket
-        initialPose = new Pose2d(-55.5, -55.5, SOUTHEAST);
+        initialPose = new Pose2d(-55.0, -57.0, SOUTHEAST);
         TrajectoryActionBuilder pathBasketNearBackup = drive.actionBuilder(initialPose)
-                .strafeToConstantHeading(new Vector2d(-50, -50))
-                .waitSeconds(0.2); //Back up from scoring position
+            //    .strafeToConstantHeading(new Vector2d(-45, -45));
+            .strafeToLinearHeading(new Vector2d(-45, -45), WEST, baseVelConstraint);
         Action trajectoryPathBasketNearBackup      = pathBasketNearBackup.build();
 
         //////////////////////////////////////////////////////////////////////////////////////////////////
         //Go to the second sample - near
-        initialPose = new Pose2d(-50, -50, SOUTHEAST);
+        //initialPose = new Pose2d(-45, -45, WEST);
+        initialPose = new Pose2d(-55.0, -57.0, SOUTHEAST);
 
         VelConstraint velConstraintSampleTwo = new MinVelConstraint(Arrays.asList(
-                new TranslationalVelConstraint(20.0),
-                new AngularVelConstraint(1.50))
+                new TranslationalVelConstraint(30.0),
+                new AngularVelConstraint(3.0))
         );
 
         TrajectoryActionBuilder pathSampleTwoNear = drive.actionBuilder(initialPose)
-                .strafeToLinearHeading(new Vector2d(-53.5, -48), WEST, velConstraintSampleTwo); //Turn to grab sample 2
+                .strafeToLinearHeading(new Vector2d(-57, -48), WEST, velConstraintSampleTwo); //Turn to grab sample 2
         Action trajectorySampleTwoNear      = pathSampleTwoNear.build();
 
         //////////////////////////////////////////////////////////////////////////////////////////////////
         //Go to the second sample - close
-//        initialPose = new Pose2d(-55.5, -47, WEST);
-//        TrajectoryActionBuilder pathSampleTwoClose = drive.actionBuilder(initialPose)
-//                .strafeToConstantHeading(new Vector2d(-55.5, -43)); //strafe to the first sample - close
-//        Action trajectorySampleTwoClose      = pathSampleTwoClose.build();
+        initialPose = new Pose2d(-57, -48, WEST);
+        TrajectoryActionBuilder pathSampleTwoClose = drive.actionBuilder(initialPose)
+                .strafeToConstantHeading(new Vector2d(-55.5, -42)); //strafe to the second sample - close
+        Action trajectorySampleTwoClose      = pathSampleTwoClose.build();
+
+        ////////////////////////////////////////////////////////////////////////////////////////////////////
+        //Go to the scoring basket - near 2
+        initialPose = new Pose2d(-55.5, -42, WEST);
+
+        VelConstraint baseVelConstraintBasket2 = new MinVelConstraint(Arrays.asList(
+                new TranslationalVelConstraint(30.0),
+                new AngularVelConstraint(3.0))
+        );
+
+        TrajectoryActionBuilder pathBasketNear2 = drive.actionBuilder(initialPose)
+                .strafeToLinearHeading(new Vector2d(-50, -50), SOUTHEAST, baseVelConstraintBasket2);
+        Action trajectoryPathBasketNear2      = pathBasketNear2.build();
+
+        //////////////////////////////////////////////////////////////////////////////////////////////////
+        //Go to the scoring basket - close 2
+        initialPose = new Pose2d(-50, -50, SOUTHEAST);
+        TrajectoryActionBuilder pathBasketClose2 = drive.actionBuilder(initialPose)
+                .strafeToConstantHeading(new Vector2d(-54.5, -56.5)); //Move into scoring position
+        Action trajectoryPathBasketClose2      = pathBasketClose2.build();
+
+        //////////////////////////////////////////////////////////////////////////////////////////////////
+        //Back up from the scoring basket
+//        initialPose = new Pose2d(-54.5, -56.5, SOUTHEAST);
+//        TrajectoryActionBuilder pathBasketNearBackup2 = drive.actionBuilder(initialPose)
+//                .strafeToConstantHeading(new Vector2d(-45, -45));
+//        Action trajectoryPathBasketNearBackup2      = pathBasketNearBackup2.build();
+
+        //////////////////////////////////////////////////////////////////////////////////////////////////
+        //Back up from the scoring basket
+        initialPose = new Pose2d(-56.5, -56.5, SOUTHEAST);
+        TrajectoryActionBuilder pathBasketNearBackup2 = drive.actionBuilder(initialPose)
+            //.strafeToConstantHeading(new Vector2d(-19.5, -0.0));
+            .strafeToLinearHeading(new Vector2d(-30, -10.0), SOUTH)//;
+            .strafeToLinearHeading(new Vector2d(-26, -10.0), SOUTH);
+        Action trajectoryPathBasketNearBackup2      = pathBasketNearBackup2.build();
 
 
         //////////////////////////////////////////////////////////////////////////////////////////////////
@@ -178,7 +202,7 @@ public class AutoLeftLinear extends LinearOpMode {
                     //Drive to sample basket with first sample
                     trajectoryPathBasketNear1,        //Get near the basket before final approach
                     new ParallelAction(
-                        intakeSlide.actionRetract(),
+                        intakeSlide.actionRetract(),  //This is just to make sure the slide doesn't torque down when we lift
                         lift.actionLiftToBasket(),    //Move lift to basket scoring height
                         trajectoryPathBasketClose
                     ),
@@ -186,53 +210,53 @@ public class AutoLeftLinear extends LinearOpMode {
                     //Score the sample
                     intakeClaw.actionClawOpen(),
                     intakeSlide.actionRetract(),
-                    lift.actionLiftDown(), //THIS IS NEEDED
-                    trajectoryPathBasketNearBackup,
-                    lift.actionClawGrab(),
-                    trajectorySampleTwoNear,
-                    intakeSlide.actionReach()
-//                    //Drive to the second sample
+                    lift.actionLiftDown(),
 
-////////////////////////////////////////WORKS DOWN TO HERE///////////////////////////////////////////////
-
-
-
-
-////                    new ParallelAction(
-////                        trajectorySampleTwoNear//,
-////                        //lift.actionClawGrab()//,    //Move lift to basket scoring height
-////                        //intakeClaw.actionClawOpen()//,
-////                    ),
-//                        //intakeClaw.actionClawOpen(),
-//                    intakeLinkage.actionLinkageOut(),
-//                    intakeClaw.actionClawClose(),
-//                    intakeLinkage.actionLinkageIn()
-
-//
-                      //trajectorySampleTwoNear
+                    //Get away from basket
 //                    new ParallelAction(
-//                            trajectorySampleTwoNear,
-//                            intakeClaw.actionClawOpen(),
-//                            lift.actionClawGrab(),
-//                            intakeSlide.actionReach()
-//                    )//,
-//
-//                    //Collect the sample
-//                    trajectorySampleTwoClose,
-//                    intakeClaw.actionClawClose(), //Grabs the specimen
-//                    intakeSlide.actionRetract(), //Raises the intake slide
-//
-//                    // Drive to sample basket with second sample
-//                    new ParallelAction(
-//                        trajectoryPathBasketNear2,
-//                        lift.actionLiftToBasket()
+//                        //lift.actionLiftDown(),
+//                        trajectoryPathBasketNearBackup
 //                    ),
-//
-//                    //Score the sample
-//                    trajectoryPathBasketClose,
-//                    intakeClaw.actionClawOpen(),
-//                    trajectoryPathBasketNearBackup,
-//                    lift.actionLiftDown()
+                    //trajectoryPathBasketNearBackup,
+
+                    //Drive to to the second sample
+                    new ParallelAction(
+                        trajectorySampleTwoNear,      //Get near the sample before final approach
+                        intakeClaw.actionClawOpen(),  //Open the claw
+                        lift.actionClawGrab()         //Move lift to correct height
+                    ),
+
+                    //Collect the sample
+                    intakeSlide.actionReach(),        //Lowers the intake slide
+                    trajectorySampleTwoClose,         //Move close to sample 1
+                    intakeClaw.actionClawClose(),     //Grabs the sample
+                    intakeSlide.actionRetract(),      //Raises the intake slide
+
+                    //Drive to sample basket with second sample
+                    trajectoryPathBasketNear2,        //Get near the basket before final approach
+                    new ParallelAction(
+                        intakeSlide.actionRetract(),  //This is just to make sure the slide doesn't torque down when we lift
+                        lift.actionLiftToBasket(),    //Move lift to basket scoring height
+                        trajectoryPathBasketClose2
+                    ),
+
+                    //Score second sample
+                    intakeClaw.actionClawOpen(),
+                    intakeSlide.actionRetract(),
+                    lift.actionLiftDown(),
+
+                    //Get away from basket
+//                    new ParallelAction(
+//                        lift.actionLiftDown(),
+//                        trajectoryPathBasketNearBackup2
+//                    )
+                    trajectoryPathBasketNearBackup2
+////////////////////////////////////////WORKS DOWN TO HERE///////////////////////////////////////////////
+                        //lift.actionClawGrab(),
+                        //trajectorySampleTwoNear,
+                        //trajectorySampleTwoClose
+                        //intakeSlide.actionReach()
+//                    //Drive to the second sample
 
 
             )

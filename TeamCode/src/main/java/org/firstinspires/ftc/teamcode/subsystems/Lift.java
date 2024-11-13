@@ -74,7 +74,7 @@ public class Lift {
                 targetPosition = 1390;
                 goToTarget(targetPosition, slidePower);//highchamber
             } else if (gamepad2.b || gamepad2.dpad_down) {
-                targetPosition = 300;
+                targetPosition = 200;
                 goToTarget(targetPosition, slidePower);//floor pick up position
             } else if (gamepad2.dpad_left) {
                 targetPosition = 725;
