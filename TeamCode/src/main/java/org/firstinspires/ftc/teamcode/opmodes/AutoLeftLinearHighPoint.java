@@ -6,7 +6,6 @@ import com.acmerobotics.roadrunner.AngularVelConstraint;
 import com.acmerobotics.roadrunner.MinVelConstraint;
 import com.acmerobotics.roadrunner.ParallelAction;
 import com.acmerobotics.roadrunner.Pose2d;
-import com.acmerobotics.roadrunner.ProfileAccelConstraint;
 import com.acmerobotics.roadrunner.SequentialAction;
 import com.acmerobotics.roadrunner.TrajectoryActionBuilder;
 import com.acmerobotics.roadrunner.TranslationalVelConstraint;
@@ -21,14 +20,17 @@ import org.firstinspires.ftc.teamcode.MecanumDrive;
 import java.util.Arrays;
 
 @Config
-@Autonomous(name = "AUTO_LEFT_LINEAR", group = "Autonomous")
-public class AutoLeftLinear extends LinearOpMode {
+@Autonomous(name = "AUTO_LEFT_LINEAR_HIGH_POINT", group = "Autonomous")
+public class AutoLeftLinearHighPoint extends LinearOpMode {
 
     double SOUTH = Math.PI;
     double EAST = 3 * Math.PI/2 ;
     double SOUTHEAST = 1.25 * Math.PI;
+    double SOUTHWEST = 3 * Math.PI/4;
+    double SOUTHWESTIsh = 2 * Math.PI/3;
     double NORTH = 0;
     double WEST = Math.PI / 2;
+
 
     @Override
     public void runOpMode() {
@@ -90,16 +92,16 @@ public class AutoLeftLinear extends LinearOpMode {
 
         //////////////////////////////////////////////////////////////////////////////////////////////////
         //Back up from the scoring basket
-        initialPose = new Pose2d(-54.0, -57.0, SOUTHEAST);
-        TrajectoryActionBuilder pathBasketNearBackup = drive.actionBuilder(initialPose)
-            //    .strafeToConstantHeading(new Vector2d(-45, -45));
-            .strafeToLinearHeading(new Vector2d(-45, -45), WEST, baseVelConstraint);
-        Action trajectoryPathBasketNearBackup      = pathBasketNearBackup.build();
+//        initialPose = new Pose2d(-54.0, -57.0, SOUTHEAST);
+//        TrajectoryActionBuilder pathBasketNearBackup = drive.actionBuilder(initialPose)
+//            //    .strafeToConstantHeading(new Vector2d(-45, -45));
+//            .strafeToLinearHeading(new Vector2d(-45, -45), WEST, baseVelConstraint);
+//        Action trajectoryPathBasketNearBackup      = pathBasketNearBackup.build();
 
         //////////////////////////////////////////////////////////////////////////////////////////////////
         //Go to the second sample - near
         //initialPose = new Pose2d(-45, -45, WEST);
-        initialPose = new Pose2d(-55.0, -57.0, SOUTHEAST);
+        initialPose = new Pose2d(-54, -57, SOUTHEAST);
 
         VelConstraint velConstraintSampleTwo = new MinVelConstraint(Arrays.asList(
                 new TranslationalVelConstraint(30.0),
@@ -146,12 +148,44 @@ public class AutoLeftLinear extends LinearOpMode {
 
         //////////////////////////////////////////////////////////////////////////////////////////////////
         //Back up from the scoring basket
+//        initialPose = new Pose2d(-53, -57, SOUTHEAST);
+//        TrajectoryActionBuilder pathBasketNearBackup2 = drive.actionBuilder(initialPose)
+//            //.strafeToConstantHeading(new Vector2d(-19.5, -0.0));
+//            .strafeToLinearHeading(new Vector2d(-30, -10.0), SOUTH)//;
+//            .strafeToLinearHeading(new Vector2d(-26, -10.0), SOUTH);
+//        Action trajectoryPathBasketNearBackup2      = pathBasketNearBackup2.build();
+        //////////////////////////////////////////////////////////////////////////////////////////////////
+        //Go to the third sample - close
         initialPose = new Pose2d(-53, -57, SOUTHEAST);
-        TrajectoryActionBuilder pathBasketNearBackup2 = drive.actionBuilder(initialPose)
+        TrajectoryActionBuilder pathThirdSampleClose = drive.actionBuilder(initialPose)
             //.strafeToConstantHeading(new Vector2d(-19.5, -0.0));
-            .strafeToLinearHeading(new Vector2d(-30, -10.0), SOUTH)//;
-            .strafeToLinearHeading(new Vector2d(-26, -10.0), SOUTH);
-        Action trajectoryPathBasketNearBackup2      = pathBasketNearBackup2.build();
+            .strafeToLinearHeading(new Vector2d(-58, -43), SOUTHWESTIsh);
+        Action trajectoryPathThirdSampleClose      = pathThirdSampleClose.build();
+        //////////////////////////////////////////////////////////////////////////////////////////////////
+        //Go to the third sample - near
+        initialPose = new Pose2d(-58, -43, SOUTHWESTIsh);
+        TrajectoryActionBuilder pathThirdSampleNear = drive.actionBuilder(initialPose)
+            .strafeToConstantHeading(new Vector2d(-58, -40));
+        Action trajectoryPathThirdSampleNear      = pathThirdSampleNear.build();
+        ////////////////////////////////////////////////////////////////////////////////////////////////////
+        //Go to the scoring basket - near 3
+        initialPose = new Pose2d(-58, -40, SOUTHWESTIsh);
+
+        VelConstraint baseVelConstraintBasket3 = new MinVelConstraint(Arrays.asList(
+                new TranslationalVelConstraint(30.0),
+                new AngularVelConstraint(3.0))
+        );
+
+        TrajectoryActionBuilder pathBasketNear3 = drive.actionBuilder(initialPose)
+                .strafeToLinearHeading(new Vector2d(-50, -50), SOUTHEAST, baseVelConstraintBasket2);
+        Action trajectoryPathBasketNear3      = pathBasketNear3.build();
+
+        //////////////////////////////////////////////////////////////////////////////////////////////////
+        //Go to the scoring basket - close 3
+        initialPose = new Pose2d(-50, -50, SOUTHEAST);
+        TrajectoryActionBuilder pathBasketClose3 = drive.actionBuilder(initialPose)
+                .strafeToConstantHeading(new Vector2d(-53, -57)); //Move into scoring position
+        Action trajectoryPathBasketClose3      = pathBasketClose3.build();
 
 
         //////////////////////////////////////////////////////////////////////////////////////////////////
@@ -159,10 +193,45 @@ public class AutoLeftLinear extends LinearOpMode {
         initialPose = new Pose2d(-48, -41, WEST);
         TrajectoryActionBuilder pathWait = drive.actionBuilder(initialPose)
                 .waitSeconds(0.25);
-        Action trajectoryWait      = pathWait.build();initialPose = new Pose2d(-48, -41, WEST);
+        Action trajectoryWait      = pathWait.build();
+
+        initialPose = new Pose2d(-56, -41, WEST);
         TrajectoryActionBuilder pathWait2 = drive.actionBuilder(initialPose)
                 .waitSeconds(0.25);
         Action trajectoryWait2      = pathWait2.build();
+
+        initialPose = new Pose2d(-58, -40, SOUTHWESTIsh);
+        TrajectoryActionBuilder pathWait3 = drive.actionBuilder(initialPose)
+                .waitSeconds(0.25);
+        Action trajectoryWait3      = pathWait3.build();
+
+        initialPose = new Pose2d(-56, -41, WEST);
+        TrajectoryActionBuilder pathWait4 = drive.actionBuilder(initialPose)
+                .waitSeconds(1);
+        Action trajectoryWait4      = pathWait4.build();
+
+
+        //////////////////////////////////////////////////////////////////////////////////////////////////
+        //Wait for the claw  action
+        initialPose = new Pose2d(-54, -57, SOUTHEAST);
+        TrajectoryActionBuilder pathWaitForClaw1 = drive.actionBuilder(initialPose)
+                .waitSeconds(0.25);
+        Action trajectoryWaitForClaw1      = pathWaitForClaw1.build();
+
+        initialPose = new Pose2d(-53, -57, SOUTHEAST);
+        TrajectoryActionBuilder pathWaitForClaw2 = drive.actionBuilder(initialPose)
+                .waitSeconds(0.25);
+        Action trajectoryWaitForClaw2      = pathWaitForClaw2.build();
+
+        initialPose = new Pose2d(-53, -57, SOUTHEAST);
+        TrajectoryActionBuilder pathWaitForClaw3 = drive.actionBuilder(initialPose)
+                .waitSeconds(0.25);
+        Action trajectoryWaitForClaw3      = pathWaitForClaw3.build();
+
+        initialPose = new Pose2d(-56, -41, WEST);
+        TrajectoryActionBuilder pathWaitForwClaw4 = drive.actionBuilder(initialPose)
+                .waitSeconds(1);
+        Action trajectoryWaitForClaw4      = pathWaitForwClaw4.build();
 
 
         waitForStart();
@@ -205,18 +274,22 @@ public class AutoLeftLinear extends LinearOpMode {
                     intakeSlide.actionRetract(),      //Raises the intake slide
 
                     //Drive to sample basket with first sample
-                    trajectoryPathBasketNear1,        //Get near the basket before final approach
-                    intakeSlide.actionRetract(),
                     new ParallelAction(
-                    intakeSlide.actionRetract(),  //This is just to make sure the slide doesn't torque down when we lift
-                    lift.actionLiftToBasket(),    //Move lift to basket scoring height
-                    trajectoryPathBasketClose
+                        trajectoryPathBasketNear1,        //Get near the basket before final approach
+                        intakeSlide.actionRetract()),
+//                    trajectoryPathBasketNear1,        //Get near the basket before final approach
+                    //intakeSlide.actionRetract(),
+                    new ParallelAction(
+                        intakeSlide.actionRetract(),  //This is just to make sure the slide doesn't torque down when we lift
+                        lift.actionLiftToBasket(),    //Move lift to basket scoring height
+                        trajectoryPathBasketClose
                     ),
 
                     //Score the sample
                     intakeClaw.actionClawOpen(),
                     intakeSlide.actionRetract(),
-                    lift.actionLiftDown(),
+                    trajectoryWaitForClaw1,
+                    //lift.actionLiftDown(),
 
                     //Get away from basket
 //                    new ParallelAction(
@@ -228,7 +301,7 @@ public class AutoLeftLinear extends LinearOpMode {
                     //Drive to to the second sample
                     new ParallelAction(
                         trajectorySampleTwoNear,      //Get near the sample before final approach
-                        intakeClaw.actionClawOpen(),  //Open the claw
+                        //intakeClaw.actionClawOpen(),  //Open the claw
                         lift.actionClawGrab()         //Move lift to correct height
                     ),
 
@@ -240,25 +313,63 @@ public class AutoLeftLinear extends LinearOpMode {
                     intakeSlide.actionRetract(),      //Raises the intake slide
 
                     //Drive to sample basket with second sample
-                    trajectoryPathBasketNear2,        //Get near the basket before final approach
-                    intakeSlide.actionRetract(),  //This is just to make sure the slide doesn't torque down when we lift
-                        new ParallelAction(
+                    new ParallelAction(
+                        trajectoryPathBasketNear2,        //Get near the basket before final approach
+                        intakeSlide.actionRetract()),//This is just to make sure the slide doesn't torque down when we lift
+                    //intakeSlide.actionRetract(),
+                    new ParallelAction(
+                        intakeSlide.actionRetract(),
                         lift.actionLiftToBasket(),    //Move lift to basket scoring height
                         trajectoryPathBasketClose2
                     ),
 
                     //Score second sample
-                    intakeClaw.actionClawOpen(),
+                    intakeClaw.actionClawOpen(),//score second sample
                     intakeSlide.actionRetract(),
-                    lift.actionLiftDown(),
+                    trajectoryWaitForClaw2,
+                        new ParallelAction(
+                        trajectoryPathThirdSampleClose,// drive to third sample
+                        lift.actionClawGrab()),
+                        new ParallelAction(
+                        lift.actionClawGrab(),
+                        intakeSlide.actionReach()), //   lower the bridge
+
+
+                    trajectoryPathThirdSampleNear,
+                    intakeClaw.actionClawClose(),//closes claw on the third sample
+                    trajectoryWait3,
+                    intakeSlide.actionRetract(),
+                    new ParallelAction(
+                        intakeSlide.actionRetract(),
+                        trajectoryPathBasketNear3),//drives to the basket
+                    //intakeSlide.actionRetract(),
+                    new ParallelAction(
+                        intakeSlide.actionRetract(),
+                        lift.actionLiftToBasket(),
+                        trajectoryPathBasketClose3),
+                    intakeClaw.actionClawOpen(),
+                    trajectoryWaitForClaw3,
+                    new ParallelAction(
+                        intakeSlide.actionRetract(),
+                        lift.actionLiftDown(),
+                        intakeSlide.actionRetract()
+                    ),
+                    intakeSlide.actionRetract(),
+                    trajectoryWait4//add park
+
+
+                        //,
+
+
+
 
                     //Get away from basket
 //                    new ParallelAction(
 //                        lift.actionLiftDown(),
 //                        trajectoryPathBasketNearBackup2
 //                    )
-                    trajectoryPathBasketNearBackup2,
-                    intakeSlide.actionRetract()
+                    //trajectoryPathBasketNearBackup2,
+                    //intakeSlide.actionRetract()
 ////////////////////////////////////////WORKS DOWN TO HERE///////////////////////////////////////////////
                         //lift.actionClawGrab(),
                         //trajectorySampleTwoNear,

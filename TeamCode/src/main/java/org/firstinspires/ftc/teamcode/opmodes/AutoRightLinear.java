@@ -19,6 +19,7 @@ public class AutoRightLinear extends LinearOpMode {
     double SOUTH = Math.PI;
     double EAST = 3 * Math.PI / 2;
     double NORTH = 0;
+    double NORTH_EAST = 7 *Math.PI /4;
     double WEST = Math.PI / 2;
 
     @Override
@@ -34,26 +35,29 @@ public class AutoRightLinear extends LinearOpMode {
         intakeClaw.clawClose();
 
         TrajectoryActionBuilder rightPathToSub = drive.actionBuilder(initialPose)
-                .splineToConstantHeading(new Vector2d(6, -32.75), WEST); //spline out to the sub
+                .splineToConstantHeading(new Vector2d(8, -32.75), WEST); //spline out to the sub
 
+        initialPose = new Pose2d(8, -32.75, WEST);
         TrajectoryActionBuilder rightPathDropSamples = drive.actionBuilder(initialPose)
                 .waitSeconds(0.5)
                 .splineToConstantHeading(new Vector2d(24,-48), WEST) //backs up from sub
                 .waitSeconds(0.01)
                 .splineToConstantHeading(new Vector2d(36,-24 ), WEST)
                 .turnTo(NORTH) //turn 90 degrease
-                .lineToXConstantHeading(46)//captures first block
-                .turnTo(EAST)
-                .splineToConstantHeading(new Vector2d(48, -60), EAST) // pushes the the first block
-                .lineToY(-12)
-                .strafeToConstantHeading(new Vector2d(54, -12)) //strafe aiming for the second block
+                .strafeToConstantHeading(new Vector2d(46,-24))
+                .turnTo(NORTH_EAST)
+                .strafeToLinearHeading(new Vector2d(50,-60),EAST)
+                .waitSeconds(0.001)
+                .strafeToConstantHeading(new Vector2d(50,-12))
+                .splineToConstantHeading(new Vector2d(56,-20),EAST)
                 .waitSeconds(0.01)
-                .strafeToConstantHeading(new Vector2d(54,-60)) //pushes the second block into the zone
-                .lineToY(-12)
-                .strafeToConstantHeading(new Vector2d(61.0, -12)) //strafe aiming for the third block
+                .strafeToConstantHeading(new Vector2d(56,-60))
                 .waitSeconds(0.01)
-                .turnTo(EAST)
-                .strafeToConstantHeading(new Vector2d(60,-60)); //pushes the third block into the zone
+                .strafeToConstantHeading(new Vector2d(56,-12))
+                .splineToConstantHeading(new Vector2d(63,-15),EAST)
+                .waitSeconds(0.01)
+                .strafeToConstantHeading(new Vector2d(63,-60))
+                ;
 
         TrajectoryActionBuilder wait = drive.actionBuilder(initialPose)
                 .waitSeconds(0.5);

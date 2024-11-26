@@ -26,7 +26,7 @@ public class ActionLib {
     public static class RobotLift {
         private DcMotor lift;
         private boolean quitter = true;
-        private double liftMotorSpeed = 0.7;
+        private double liftMotorSpeed = 1;
         private int downTarget = 0;
         private int downTargetPosition = 0;
 
@@ -162,7 +162,7 @@ public class ActionLib {
                 double currentPosition = lift.getCurrentPosition();
                 packet.put("liftPos", currentPosition);
                 if ((Math.abs(targetPosition - currentPosition) > motorPrecision) || !quitter) {
-                    goToTarget(targetPosition, 0.5);
+                    goToTarget(targetPosition, 0.75);
                     return true;
                 } else {
                     if (quitter) {
@@ -185,7 +185,7 @@ public class ActionLib {
             @Override
             public boolean run(@NonNull TelemetryPacket packet) {
                 Log.v("ActionClawGrab", "START/////////////////////////////////////////////////////////////////");
-                int targetPosition = 240;
+                int targetPosition = 125;//nick dropped this 55 ticks
 
                 double currentPosition = lift.getCurrentPosition();
                 packet.put("liftPos", currentPosition);
@@ -222,7 +222,7 @@ public class ActionLib {
             @Override
             public boolean run(@NonNull TelemetryPacket packet) {
                 Log.v("ActionLiftToBasket", "START/////////////////////////////////////////////////////////////////");
-                int targetPosition = 4000;
+                int targetPosition = 4100;
 
                 double currentPosition = lift.getCurrentPosition();
                 packet.put("liftPos", currentPosition);
@@ -286,7 +286,7 @@ public class ActionLib {
 
     public static class RobotIntakeSlide {
         private DcMotor intakeSlide;
-        private double motorPower = 0.75;
+        private double motorPower = 1;
 
         public RobotIntakeSlide(HardwareMap hardwareMap) {
             intakeSlide = hardwareMap.get(DcMotor.class, "bridge");
@@ -309,7 +309,7 @@ public class ActionLib {
 
             @Override
             public boolean run(@NonNull TelemetryPacket packet) {
-                int targetPosition = 0;
+                int targetPosition = -20;
 
                 if (!initialized) {
                     goToTarget(targetPosition, motorPower);
@@ -318,7 +318,7 @@ public class ActionLib {
 
                 double currentPosition = intakeSlide.getCurrentPosition();
                 packet.put("liftPos", currentPosition);
-                if (Math.abs(targetPosition - currentPosition) > 50) {
+                if (Math.abs(targetPosition - currentPosition) > 10) {
                     return true;
                 } else {
                     intakeSlide.setPower(0);
@@ -336,7 +336,7 @@ public class ActionLib {
 
             @Override
             public boolean run(@NonNull TelemetryPacket packet) {
-                int targetPosition = 1100;
+                int targetPosition = 1050;
 
                 if (!initialized) {
                     goToTarget(targetPosition, motorPower);
@@ -345,7 +345,7 @@ public class ActionLib {
 
                 double currentPosition = intakeSlide.getCurrentPosition();
                 packet.put("liftPos", currentPosition);
-                if (Math.abs(targetPosition - currentPosition) > 50) {
+                if (Math.abs(targetPosition - currentPosition) > 10) {
                     return true;
                 } else {
                     intakeSlide.setPower(0);
@@ -431,7 +431,7 @@ public class ActionLib {
 
     public static class RobotIntakeClaw {
         private Servo intakeClawServo;
-        private double openPosition = 0.6;
+        private double openPosition = 0.65;
         private double closedPosition = 0.45;
 
         private Servo  fingerServo;

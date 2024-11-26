@@ -27,7 +27,8 @@ public final class SplineTest extends LinearOpMode {
 
                         //.setTangent(0)
                         //.splineToConstantHeading(new Vector2d(30, 30), Math.PI / 2)
-                        .splineToConstantHeading(new Vector2d(30, 30), 0)
+                        .splineToConstantHeading(new Vector2d(24, 24), 0)
+                        //.splineToConstantHeading(new Vector2d(0, 0), 0)
 
                         .build());
         } else if (TuningOpModes.DRIVE_CLASS.equals(TankDrive.class)) {
