@@ -17,6 +17,7 @@ public class Lift {
     public IntakeSlide intakeSlide;
     public IntakeClaw intakeClaw;
     public IntakeLinkage intakelinkage;
+    public Climber climber;
 
     public Lift(HardwareMap hardwareMap, RobotBase opMode) {
         this.hardwareMap = hardwareMap;
@@ -34,6 +35,7 @@ public class Lift {
         intakeSlide = new IntakeSlide();
         intakeClaw = new IntakeClaw();
         intakelinkage = new IntakeLinkage();
+        climber = new Climber();
     }
 
     public class LiftSlide {
@@ -67,7 +69,7 @@ public class Lift {
             if (gamepad2.y) {
                 targetPosition = 4000;
                 goToTarget(targetPosition, slidePower);//highbasket
-            } else if (gamepad2.a) {
+            } else if (gamepad2.a  || gamepad2.dpad_up) {
                 targetPosition = 0;
                 goToTarget(targetPosition, slidePower);//home
             } else if (gamepad2.x) {
@@ -135,12 +137,21 @@ public class Lift {
 
             //Go forward
                  if (gamepad2.dpad_down) {
-                     slidetargetPosition = 1200;
-                     goToTarget(slidetargetPosition, intakeslidePowerAuto);//down
+                     slidetargetPosition = 1265;
+                     goToTarget(slidetargetPosition, 0.5);//down
                  } else if (gamepad2.dpad_up) {
-                     slidetargetPosition = -20;
-                     goToTarget(slidetargetPosition, intakeslidePowerMan);//up
-            } else {
+                     slidetargetPosition = 0;
+                     goToTarget(slidetargetPosition, 0.75);//up
+
+                 } else if (gamepad2.left_bumper) {
+                     slidetargetPosition = slidetargetPosition + 2;
+                     goToTarget(slidetargetPosition,1);
+
+                 } else if (gamepad2.right_bumper) {
+                     slidetargetPosition = slidetargetPosition - 2;
+                     goToTarget(slidetargetPosition, 1);
+
+
 //                if (gamepad2.left_stick_y > .1) {
 //                    slidetargetPosition = slidetargetPosition - 25;
 //                    goToTarget(slidetargetPosition, intakeslidePowerMan);
@@ -216,11 +227,39 @@ public class Lift {
         public void doIntakeLinkageStuff(Gamepad gamepad2) {
             //telemetry.addData("gamepadrightsticky:", gamepad2.right_stick_y);
             //slidePosition = intakeliftMotor.getCurrentPosition();
-            intakeLinkage.setPosition(0.025+(-0.5 * gamepad2.left_stick_y));
+            intakeLinkage.setPosition(0+(-0.5 * gamepad2.left_stick_y));
 
             }
         }
 
+    public class Climber {
+
+        public DcMotor climber;
+        public DcMotor climber2;
+        public Climber() { //HardwareMap hardwareMap, RobotBase opMode
+            initHardware();
+        }
+
+        protected void initHardware() {
+            climber = hardwareMap.get(DcMotor.class, "climber");
+            climber2 = hardwareMap.get(DcMotor.class, "climber2");
+        }
+
+        public void doIntakeClimberStuff(Gamepad gamepad1) {
+            if (gamepad1.y){
+                climber.setPower(0.975);
+                climber2.setPower(-1);
+            } else if (gamepad1.a) {
+                climber.setPower(-1);
+                climber2.setPower(0.975);
+
+            } else {
+                climber.setPower(0);
+                climber2.setPower(0);
+            }
+
+        }
+    }
 
 
 

@@ -68,6 +68,7 @@ public class MainTeleOp extends RobotBase
         lift.intakeSlide.doIntakeSlideStuff(gamepad2);
         lift.intakeClaw.doIntakeClawStuff(gamepad2);
         lift.intakelinkage.doIntakeLinkageStuff(gamepad2);
+        lift.climber.doIntakeClimberStuff(gamepad1);
 //        telemetry.addData("GP2.left_stick_y:", gamepad2.left_stick_y);
 //        telemetry.addData("GP2.a:", gamepad2.a);
 //        telemetry.addData("GP2.b:", gamepad2.b);
