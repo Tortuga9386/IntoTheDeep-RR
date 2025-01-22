@@ -13,9 +13,8 @@ import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
 import org.firstinspires.ftc.teamcode.MecanumDrive;
-
-@Config
 @Disabled
+@Config
 @Autonomous(name = "Tuning", group = "Autonomous")
 public class TuningProgram extends LinearOpMode {
 
@@ -37,30 +36,26 @@ public class TuningProgram extends LinearOpMode {
         //Init robot position
         intakeClaw.clawClose();
 
-        TrajectoryActionBuilder rightPathToSub = drive.actionBuilder(initialPose)
-                .strafeToConstantHeading(new Vector2d(24,0))
-//                .waitSeconds(0.01)
-//                .splineToConstantHeading(new Vector2d(36,-24 ), WEST)
-//                .turnTo(NORTH) //turn 90 degrease
-//                .strafeToConstantHeading(new Vector2d(46,-24))
-//                .turnTo(NORTH_EAST)
-//                .strafeToLinearHeading(new Vector2d(50,-60),EAST)
-//                .waitSeconds(0.001)
-//                .strafeToConstantHeading(new Vector2d(50,-12))
-//                .splineToConstantHeading(new Vector2d(56,-20),EAST)
-//                .waitSeconds(0.01)
-//                .strafeToConstantHeading(new Vector2d(56,-60))
-//                .waitSeconds(0.01)
-//                .strafeToConstantHeading(new Vector2d(56,-12))
-//                .splineToConstantHeading(new Vector2d(63,-15),EAST)
-//                .waitSeconds(0.01)
-//                .strafeToConstantHeading(new Vector2d(63,-60))
-                ;
 
-        TrajectoryActionBuilder wait = drive.actionBuilder(initialPose)
-                .waitSeconds(0.5);
+        initialPose = new Pose2d(0, 0, WEST);// driving to the first sample
+
+        TrajectoryActionBuilder rightPathToSub = drive.actionBuilder(initialPose)
+                .strafeToConstantHeading(new Vector2d(24,24));
 
         Action trajectoryActionToSub = rightPathToSub.build();
+
+
+        initialPose = new Pose2d(24, 24, WEST);// driving to the first sample
+
+        TrajectoryActionBuilder rightPathToSubBack = drive.actionBuilder(initialPose)
+                .strafeToConstantHeading(new Vector2d(0,0));
+
+        Action trajectoryActionToSubBack = rightPathToSubBack.build();
+
+        TrajectoryActionBuilder wait = drive.actionBuilder(initialPose)
+                .waitSeconds(1);
+
+        Action trajectoryActionwait = wait.build();
         telemetry.addData("Status", "> INIT");
         telemetry.update();
 
@@ -69,17 +64,9 @@ public class TuningProgram extends LinearOpMode {
 
         Actions.runBlocking(
             new SequentialAction(
-                new ParallelAction(
-                    trajectoryActionToSub
-//                    new SequentialAction( lift.actionLiftSpecimen() )
-//                ),
-//                lift.actionliftScore(),
-//                intakeClaw.actionClawOpen(),
-//                lift.actionLiftDown(),
-//                new ParallelAction(
-//                    trajectoryActionDropSamples,
-//                    new SequentialAction( lift.actionLiftDown() )
-                )
+                trajectoryActionToSub,
+                trajectoryActionToSubBack,
+                trajectoryActionwait
             )
         );
     }

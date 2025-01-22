@@ -441,8 +441,8 @@ public class ActionLib {
         public RobotIntakeClaw(HardwareMap hardwareMap) {
             intakeClawServo = hardwareMap.get(com.qualcomm.robotcore.hardware.Servo.class, "frontclaw");
             intakeClawServo.setDirection(Servo.Direction.FORWARD);
-            fingerServo     = hardwareMap.get(com.qualcomm.robotcore.hardware.Servo.class, "finger");
-            fingerServo.setDirection(Servo.Direction.FORWARD);
+//            fingerServo     = hardwareMap.get(com.qualcomm.robotcore.hardware.Servo.class, "finger");
+//            fingerServo.setDirection(Servo.Direction.FORWARD);
         }
 
         public void clawOpen() {
@@ -497,6 +497,8 @@ public class ActionLib {
 
             @Override
             public boolean run(@NonNull TelemetryPacket packet) {
+
+                //retractFinger();
                 if (!initialized) {
                     intakeClawServo.setPosition(closedPosition);
                     initialized = true;
@@ -598,8 +600,9 @@ public class ActionLib {
 
     public static class RobotIntakeLinkage {
         private Servo intakeLinkageServo;
-        private double inPosition = 0.3;
-        private double outPosition = 0.5;
+        private double inPosition = 0;
+        private double outPosition = -0.55;
+        private double midPosition = -0.25;
 
         public RobotIntakeLinkage(HardwareMap hardwareMap) {
             intakeLinkageServo = hardwareMap.get(com.qualcomm.robotcore.hardware.Servo.class, "linkage");
@@ -612,6 +615,9 @@ public class ActionLib {
 
         public void linkageIn() {
             intakeLinkageServo.setPosition(inPosition);
+        }
+        public void linkageMid() {
+            intakeLinkageServo.setPosition(midPosition);
         }
 
         public class ActionLinkageOut implements Action {
@@ -653,14 +659,14 @@ public class ActionLib {
             @Override
             public boolean run(@NonNull TelemetryPacket packet) {
                 if (!initialized) {
-                    intakeLinkageServo.setPosition(inPosition);
+                    linkageIn();
                     initialized = true;
                 }
 
                 double currentPosition = intakeLinkageServo.getPosition();
                 packet.put("linkagePos2", currentPosition);
                 if (Math.abs(inPosition - currentPosition) > servoPrecision) {
-                    intakeLinkageServo.setPosition(inPosition);
+                    linkageIn();
                     Log.v("ActionLinkageIn2", "RUNNING//////targetPosition"+inPosition+ " vs currentPosition"+currentPosition+"////////////////////////////////////////");
                     Log.v("ActionLinkageIn2", "RUNNING//////testVal:"+Math.abs(inPosition - currentPosition)+" > "+servoPrecision+"///////////////////////////////////////");
                     return true;
@@ -670,8 +676,37 @@ public class ActionLib {
                 }
             }
         }
+
         public Action actionLinkageIn() {
             return new ActionLinkageIn();
+        }
+
+        public class ActionLinkageMid implements Action {
+            private boolean initialized = false;
+
+            @Override
+            public boolean run(@NonNull TelemetryPacket packet) {
+                if (!initialized) {
+                    linkageMid();
+                    initialized = true;
+                }
+
+                double currentPosition = intakeLinkageServo.getPosition();
+                packet.put("linkagePos2", currentPosition);
+                if (Math.abs(inPosition - currentPosition) > servoPrecision) {
+                    linkageMid();
+                    Log.v("ActionLinkageIn2", "RUNNING//////targetPosition"+inPosition+ " vs currentPosition"+currentPosition+"////////////////////////////////////////");
+                    Log.v("ActionLinkageIn2", "RUNNING//////testVal:"+Math.abs(inPosition - currentPosition)+" > "+servoPrecision+"///////////////////////////////////////");
+                    return true;
+                } else {
+                    Log.v("ActionLinkageIn2", "DONE//////testVal:"+Math.abs(outPosition - currentPosition)+" > "+servoPrecision+"///////////////////////////////////////");
+                    return false;
+                }
+            }
+        }
+
+        public Action actionLinkageMid() {
+            return new ActionLinkageMid();
         }
 
     }

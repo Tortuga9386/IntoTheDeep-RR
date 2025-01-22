@@ -49,17 +49,9 @@ public class MainTeleOp extends RobotBase
      */
     @Override
     public void loop() {
-        //telemetry.addData("Status", "Run Time:" + runtime.toString());
-        //Log.v("Loop", "Run Time:" + runtime.toString());
-
         drive_loop();
         lift_loop();
         husky_loop();
-
-//        telemetry.addData("1", "?>" + "");
-//        telemetry.addData("2", "?>" + "");
-//        telemetry.addData("3", "?>" + "");
-//        telemetry.addData("4", "?>" + "");
     }
 
 
@@ -68,24 +60,20 @@ public class MainTeleOp extends RobotBase
         lift.intakeSlide.doIntakeSlideStuff(gamepad2);
         lift.intakeClaw.doIntakeClawStuff(gamepad2);
         lift.intakelinkage.doIntakeLinkageStuff(gamepad2);
-        lift.climber.doIntakeClimberStuff(gamepad1);
-//        telemetry.addData("GP2.left_stick_y:", gamepad2.left_stick_y);
-//        telemetry.addData("GP2.a:", gamepad2.a);
-//        telemetry.addData("GP2.b:", gamepad2.b);
-//        telemetry.addData("GP2.x:", gamepad2.x);
-//        telemetry.addData("GP2.y:", gamepad2.y);
-          telemetry.addData("encoder", lift.liftSlide.liftMotor.getCurrentPosition());
-          telemetry.addData("encoderslide", lift.intakeSlide.intakeliftMotor.getCurrentPosition());
-          telemetry.addData("linkage pos",lift.intakelinkage.intakeLinkage.getPosition());
+        lift.climber.doClimberStuff(gamepad1);
+        lift.roller.doIntakeRollerStuff(gamepad2);
+        lift.tilter.doIntakeTilterStuff(gamepad2);
+        telemetry.addData("encoder", lift.liftSlide.liftMotor.getCurrentPosition());
+        telemetry.addData("encoderslide", lift.intakeSlide.intakeliftMotor.getCurrentPosition());
+        telemetry.addData("linkage pos",lift.intakelinkage.intakeLinkage.getPosition());
+        telemetry.addData("climber pos1",lift.climber.climberMotor1.getCurrentPosition());
     }
 
     protected void drive_loop() {
 
-        //
+
         //slidePosition
         drive.turtleFactor = (1 - 0.75 * lift.liftSlide.liftMotor.getCurrentPosition() / 5000);
-
-//        telemetry.addData("turtleFactor:", drive.turtleFactor);
         drive.driveFromGamepad(gamepad1);
     }
 
