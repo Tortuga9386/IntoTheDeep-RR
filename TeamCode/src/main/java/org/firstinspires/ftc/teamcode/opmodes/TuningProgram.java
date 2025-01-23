@@ -29,7 +29,7 @@ public class TuningProgram extends LinearOpMode {
         Pose2d initialPose = new Pose2d(0, -0, WEST);
         MecanumDrive drive = new MecanumDrive(hardwareMap, initialPose);
         ActionLib.RobotLift             lift            = new ActionLib.RobotLift(hardwareMap);
-        ActionLib.RobotIntakeSlide      intakeSlide     = new ActionLib.RobotIntakeSlide(hardwareMap);
+        ActionLib.RobotIntake      intakeSlide     = new ActionLib.RobotIntake(hardwareMap);
 //        ActionLib.RobotIntakeRotator    intakeRotator   = new ActionLib.RobotIntakeRotator(hardwareMap);
         ActionLib.RobotIntakeClaw       intakeClaw      = new ActionLib.RobotIntakeClaw(hardwareMap);
 

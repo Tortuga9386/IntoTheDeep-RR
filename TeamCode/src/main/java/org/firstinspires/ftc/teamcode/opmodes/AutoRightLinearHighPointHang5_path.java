@@ -37,12 +37,13 @@ public class AutoRightLinearHighPointHang5_path extends LinearOpMode {
         Pose2d initialPose = new Pose2d(6.25, -65, WEST);
         MecanumDrive drive = new MecanumDrive(hardwareMap, initialPose);
         ActionLib.RobotLift             lift            = new ActionLib.RobotLift(hardwareMap);
-        ActionLib.RobotIntakeSlide      intakeSlide     = new ActionLib.RobotIntakeSlide(hardwareMap);
+        ActionLib.RobotIntake      intakeSlide     = new ActionLib.RobotIntake(hardwareMap);
 //        ActionLib.RobotIntakeRotator    intakeRotator   = new ActionLib.RobotIntakeRotator(hardwareMap);
         ActionLib.RobotIntakeClaw       intakeClaw      = new ActionLib.RobotIntakeClaw(hardwareMap);
 
         //Init robot position
         intakeClaw.clawClose();
+        intakeSlide.actionIntakeUp();
 
         TrajectoryActionBuilder rightPathToSub = drive.actionBuilder(initialPose)
                 .splineToConstantHeading(new Vector2d(-2, -32.5), WEST); //spline out to the sub and scoring first spec
@@ -67,6 +68,10 @@ public class AutoRightLinearHighPointHang5_path extends LinearOpMode {
 
 
 // wait section claw down
+        initialPose = new Pose2d(6.25, -65, WEST);
+        TrajectoryActionBuilder pathWait1 = drive.actionBuilder(initialPose)
+                .waitSeconds(30);
+        Action trajectoryActionpathpathWait1 = pathWait1.build();
 
 // wait section claw up
 
@@ -79,13 +84,7 @@ public class AutoRightLinearHighPointHang5_path extends LinearOpMode {
 
         Actions.runBlocking(
             new SequentialAction(
-                new ParallelAction(
-                    trajectoryActionToSub
-                ),trajectoryActionbackUpFromSub,
-                    new ParallelAction(
-                            intakeSlide.actionRetract(),
-                            trajectoryActionToSample1
-                    ),trajectoryActionpathPushingSample1
+                    new ParallelAction(intakeSlide.actionIntakeUp(),lift.actionLiftSpecimen(),trajectoryActionToSub)
             )
         );
     }
