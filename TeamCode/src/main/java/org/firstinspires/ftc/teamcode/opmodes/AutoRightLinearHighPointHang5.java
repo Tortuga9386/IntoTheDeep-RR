@@ -64,7 +64,7 @@ public class AutoRightLinearHighPointHang5 extends LinearOpMode {
 // wait section claw down
         initialPose = new Pose2d(6.25, -65, WEST);
         TrajectoryActionBuilder pathWait1 = drive.actionBuilder(initialPose)
-                .waitSeconds(30);
+                .waitSeconds(0.075);
         Action trajectoryActionpathpathWait1 = pathWait1.build();
 
 // wait section claw up
@@ -78,7 +78,16 @@ public class AutoRightLinearHighPointHang5 extends LinearOpMode {
 
         Actions.runBlocking(
             new SequentialAction(
-                    new ParallelAction(intakeSlide.actionIntakeUp(),lift.actionLiftSpecimen(),trajectoryActionToSub)
+                    new ParallelAction(
+                            intakeSlide.actionIntakeUp(),
+                            lift.actionLiftSpecimen(),
+                            new SequentialAction(trajectoryActionpathpathWait1,trajectoryActionToSub)),
+                    lift.actionliftScore(),
+                    intakeClaw.actionClawClose(),
+                    new ParallelAction(trajectoryActionbackUpFromSub,lift.actionClawGrab()),
+                    trajectoryActionToSample1,
+                    trajectoryActionpathPushingSample1
+
             )
         );
     }

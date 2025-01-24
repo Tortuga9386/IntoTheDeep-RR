@@ -33,7 +33,7 @@ public class AutoRightLinear extends LinearOpMode {
         ActionLib.RobotIntakeClaw       intakeClaw      = new ActionLib.RobotIntakeClaw(hardwareMap);
 
         //Init robot position
-        intakeClaw.clawClose();
+        intakeClaw.actionClawClose();
 
         TrajectoryActionBuilder rightPathToSub = drive.actionBuilder(initialPose)
                 .splineToConstantHeading(new Vector2d(8, -32.75), WEST); //spline out to the sub

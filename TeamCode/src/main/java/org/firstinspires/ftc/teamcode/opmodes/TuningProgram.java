@@ -34,7 +34,7 @@ public class TuningProgram extends LinearOpMode {
         ActionLib.RobotIntakeClaw       intakeClaw      = new ActionLib.RobotIntakeClaw(hardwareMap);
 
         //Init robot position
-        intakeClaw.clawClose();
+        intakeClaw.actionClawClose();
 
 
         initialPose = new Pose2d(0, 0, WEST);// driving to the first sample

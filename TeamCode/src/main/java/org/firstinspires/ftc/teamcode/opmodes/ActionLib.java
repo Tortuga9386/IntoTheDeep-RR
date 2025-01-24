@@ -186,7 +186,7 @@ public class ActionLib {
             @Override
             public boolean run(@NonNull TelemetryPacket packet) {
                 Log.v("ActionClawGrab", "START/////////////////////////////////////////////////////////////////");
-                int targetPosition = 125;//nick dropped this 55 ticks
+                int targetPosition = 210;//nick dropped this 55 ticks
 
                 double currentPosition = lift.getCurrentPosition();
                 packet.put("liftPos", currentPosition);
@@ -515,7 +515,7 @@ public class ActionLib {
             @Override
             public boolean run(@NonNull TelemetryPacket packet) {
                 Log.v("ActionClawOpen", "START/////////////////////////////////////////////////////////////////");
-                extendTheFinger();
+                //extendTheFinger();
 
                 if (!initialized) {
                     intakeClawServo.setPosition(openPosition);
