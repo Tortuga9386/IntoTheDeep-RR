@@ -34,10 +34,12 @@ public class AutoRightLinearHighPointHang5 extends LinearOpMode {
         ActionLib.RobotIntake      intakeSlide     = new ActionLib.RobotIntake(hardwareMap);
 //        ActionLib.RobotIntakeRotator    intakeRotator   = new ActionLib.RobotIntakeRotator(hardwareMap);
         ActionLib.RobotIntakeClaw       intakeClaw      = new ActionLib.RobotIntakeClaw(hardwareMap);
+        ActionLib.RobotIntakeTilter     intakeTilter    =new ActionLib.RobotIntakeTilter(hardwareMap);
 
         //Init robot position
         intakeClaw.clawClose();
         intakeSlide.actionIntakeUp();
+        intakeTilter.tilterDown();
 
         TrajectoryActionBuilder rightPathToSub = drive.actionBuilder(initialPose)
                 .splineToConstantHeading(new Vector2d(-2, -32.5), WEST); //spline out to the sub and scoring first spec
@@ -55,8 +57,18 @@ public class AutoRightLinearHighPointHang5 extends LinearOpMode {
 
         initialPose = new Pose2d(42, -22, NORTH_EAST);
         TrajectoryActionBuilder pathPushingSample1 = drive.actionBuilder(initialPose)
-                .strafeToLinearHeading(new Vector2d(48, -62), EAST); //pushing to first sample
+                .strafeToLinearHeading(new Vector2d(48, -36), EAST); //pushing to first sample
         Action trajectoryActionpathPushingSample1 = pathPushingSample1.build();
+
+        initialPose = new Pose2d(48, -36, EAST);
+        TrajectoryActionBuilder pathPushingSample1Part2 = drive.actionBuilder(initialPose)
+                .splineToConstantHeading(new Vector2d(44, -65), EAST); //pushing to first sample
+        Action trajectoryActionpathPushingSample1Part2 = pathPushingSample1Part2.build();
+
+        initialPose = new Pose2d(44, -65, EAST);
+        TrajectoryActionBuilder pathToSub2 = drive.actionBuilder(initialPose)
+                .strafeToLinearHeading(new Vector2d(2, -32.5), WEST); //pushing to first sample
+        Action trajectoryActionpathToSub2 = pathToSub2.build();
 
 
 
@@ -66,6 +78,12 @@ public class AutoRightLinearHighPointHang5 extends LinearOpMode {
         TrajectoryActionBuilder pathWait1 = drive.actionBuilder(initialPose)
                 .waitSeconds(0.075);
         Action trajectoryActionpathpathWait1 = pathWait1.build();
+
+
+        initialPose = new Pose2d(2, -32.5, EAST);
+        TrajectoryActionBuilder pathWait2 = drive.actionBuilder(initialPose)
+                .waitSeconds(30);
+        Action trajectoryActionpathpathWait2 = pathWait1.build();
 
 // wait section claw up
 
@@ -81,12 +99,18 @@ public class AutoRightLinearHighPointHang5 extends LinearOpMode {
                     new ParallelAction(
                             intakeSlide.actionIntakeUp(),
                             lift.actionLiftSpecimen(),
+                            intakeTilter.actionTilterUp(),
                             new SequentialAction(trajectoryActionpathpathWait1,trajectoryActionToSub)),
                     lift.actionliftScore(),
-                    intakeClaw.actionClawClose(),
+                    intakeClaw.actionClawOpen(),
                     new ParallelAction(trajectoryActionbackUpFromSub,lift.actionClawGrab()),
                     trajectoryActionToSample1,
-                    trajectoryActionpathPushingSample1
+                    trajectoryActionpathPushingSample1,
+                    trajectoryActionpathPushingSample1Part2,
+                    new ParallelAction(intakeClaw.actionClawClose(),intakeSlide.actionIntakeUp()),
+                    trajectoryActionpathToSub2,
+                    trajectoryActionpathpathWait2
+
 
             )
         );

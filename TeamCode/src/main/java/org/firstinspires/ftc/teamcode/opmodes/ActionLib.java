@@ -526,11 +526,8 @@ public class ActionLib {
                 packet.put("clawPos", currentPosition);
                 if (Math.abs(openPosition - currentPosition) > servoPrecision) {
                     intakeClawServo.setPosition(openPosition);
-                    Log.v("ActionClawOpen", "RUNNING//////targetPosition"+openPosition+ " vs currentPosition"+currentPosition+"////////////////////////////////////////");
-                    Log.v("ActionClawOpen", "RUNNING//////testVal:"+Math.abs(openPosition - currentPosition)+" > "+servoPrecision+"///////////////////////////////////////");
                     return true;
                 } else {
-                    Log.v("ActionClawOpen", "DONE//////testVal:"+Math.abs(openPosition - currentPosition)+" > "+servoPrecision+"///////////////////////////////////////");
                     return false;
                 }
 
@@ -557,8 +554,6 @@ public class ActionLib {
                 packet.put("clawPos", currentPosition);
                 if (Math.abs(closedPosition - currentPosition) > servoPrecision) {
                     intakeClawServo.setPosition(closedPosition);
-//                    Log.v("ActionClawGrab", "RUNNING//////targetPosition"+openPosition+ " vs currentPosition"+currentPosition+"////////////////////////////////////////");
-//                    Log.v("ActionClawGrab", "RUNNING//////testVal:"+Math.abs(openPosition - currentPosition)+" > 50///////////////////////////////////////");
                     return true;
                 } else {
                     return false;
@@ -571,6 +566,89 @@ public class ActionLib {
         }
 
     }
+
+//////////////////////////////////////////////////////////////////////////
+///  INTAKE TILTER
+//////////////////////////////////////////////////////////////////////////
+
+    public static class RobotIntakeTilter {
+        private Servo intakeTilterServo;
+
+        private double tilterUpPos = 0.5;
+        private double tilterDownPos = 0.85;
+
+        public RobotIntakeTilter(HardwareMap hardwareMap) {
+            intakeTilterServo = hardwareMap.get(com.qualcomm.robotcore.hardware.Servo.class, "tilter");
+            intakeTilterServo.setDirection(Servo.Direction.FORWARD);
+        }
+
+        public void tilterDown() {
+            intakeTilterServo.setPosition(tilterUpPos);
+        }
+
+        public void tilterUp() {
+            intakeTilterServo.setPosition(tilterDownPos);
+        }
+
+
+        public class ActionTilterUp implements Action {
+            private boolean initialized = false;
+
+            @Override
+            public boolean run(@NonNull TelemetryPacket packet) {
+                Log.v("ActionClawOpen", "START/////////////////////////////////////////////////////////////////");
+                //extendTheFinger();
+
+                if (!initialized) {
+                    intakeTilterServo.setPosition(tilterUpPos);
+                    initialized = true;
+                }
+
+                double currentPosition = intakeTilterServo.getPosition();
+                packet.put("clawPos", currentPosition);
+                if (Math.abs(tilterUpPos - currentPosition) > servoPrecision) {
+                    intakeTilterServo.setPosition(tilterUpPos);
+                    return true;
+                } else {
+                    return false;
+                }
+
+            }
+        }
+
+        public Action actionTilterUp() {
+            return new ActionTilterUp();
+        }
+
+        public class ActionTilterDown implements Action {
+            private boolean initialized = false;
+
+            @Override
+            public boolean run(@NonNull TelemetryPacket packet) {
+
+                //retractFinger();
+                if (!initialized) {
+                    intakeTilterServo.setPosition(tilterDownPos);
+                    initialized = true;
+                }
+
+                double currentPosition = intakeTilterServo.getPosition();
+                packet.put("clawPos", currentPosition);
+                if (Math.abs(tilterDownPos - currentPosition) > servoPrecision) {
+                    intakeTilterServo.setPosition(tilterDownPos);
+                    return true;
+                } else {
+                    return false;
+                }
+            }
+        }
+
+        public Action actionTilterDown() {
+            return new ActionTilterDown();
+        }
+
+    }
+
 
 //////////////////////////////////////////////////////////////////////////
 ///  INTAKE LINKAGE
