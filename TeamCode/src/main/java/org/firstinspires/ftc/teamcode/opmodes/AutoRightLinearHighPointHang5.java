@@ -14,7 +14,7 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import org.firstinspires.ftc.teamcode.MecanumDrive;
 
 @Config
-@Autonomous(name = "AUTO_RIGHT_LINEAR_5_SPECIMEN", group = "Autonomous")
+@Autonomous(name = "AUTO_RIGHT_5_SPEC", group = "Autonomous")
 public class AutoRightLinearHighPointHang5 extends LinearOpMode {
 
     double SOUTH = Math.PI;
