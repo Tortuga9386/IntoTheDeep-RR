@@ -175,7 +175,8 @@ public class Lift {
 
         protected void initHardware() {
             intakeClaw = hardwareMap.get(Servo.class, "frontclaw");
-            intakeClaw.setPosition(0.705);
+            intakeClaw.setPosition(0.705);//            intakeClaw.setPosition(0.705);
+
         }
 
         public void doIntakeClawStuff(Gamepad gamepad2) {
