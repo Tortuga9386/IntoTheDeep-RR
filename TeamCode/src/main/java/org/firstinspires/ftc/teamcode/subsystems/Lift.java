@@ -180,7 +180,7 @@ public class Lift {
 
         public void doIntakeClawStuff(Gamepad gamepad2) {
             if (gamepad2.right_bumper) {
-                intakeClaw.setPosition(0.44);
+                intakeClaw.setPosition(0.43);
             }
             if (gamepad2.left_bumper) {
                 intakeClaw.setPosition(0.705);
