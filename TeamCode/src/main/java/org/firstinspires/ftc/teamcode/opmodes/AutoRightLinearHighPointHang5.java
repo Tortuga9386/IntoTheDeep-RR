@@ -52,20 +52,20 @@ public class AutoRightLinearHighPointHang5 extends LinearOpMode {
 
         initialPose = new Pose2d(24, -42, NORTH_WEST);
         TrajectoryActionBuilder pathToSample1 = drive.actionBuilder(initialPose)
-                .strafeToLinearHeading(new Vector2d(42, -22), NORTH_EAST); //strafe to first sample
+                .strafeToLinearHeading(new Vector2d(42, -20), NORTH_EAST); //strafe to first sample
         Action trajectoryActionToSample1 = pathToSample1.build();
 
-        initialPose = new Pose2d(42, -22, NORTH_EAST);
+        initialPose = new Pose2d(42, -20, NORTH_EAST);
         TrajectoryActionBuilder pathPushingSample1 = drive.actionBuilder(initialPose)
                 .strafeToLinearHeading(new Vector2d(48, -36), EAST); //pushing to first sample
         Action trajectoryActionpathPushingSample1 = pathPushingSample1.build();
 
         initialPose = new Pose2d(48, -36, EAST);
         TrajectoryActionBuilder pathPushingSample1Part2 = drive.actionBuilder(initialPose)
-                .splineToConstantHeading(new Vector2d(44, -65), EAST); //pushing to first sample
+                .splineToConstantHeading(new Vector2d(48, -64), EAST); //pushing to first sample
         Action trajectoryActionpathPushingSample1Part2 = pathPushingSample1Part2.build();
 
-        initialPose = new Pose2d(44, -65, EAST);
+        initialPose = new Pose2d(48, -64, EAST);
         TrajectoryActionBuilder pathToSub2 = drive.actionBuilder(initialPose)
                 .strafeToLinearHeading(new Vector2d(2, -32.5), WEST); //pushing to first sample
         Action trajectoryActionpathToSub2 = pathToSub2.build();
@@ -107,8 +107,7 @@ public class AutoRightLinearHighPointHang5 extends LinearOpMode {
                     trajectoryActionToSample1,
                     trajectoryActionpathPushingSample1,
                     trajectoryActionpathPushingSample1Part2,
-                    new ParallelAction(intakeClaw.actionClawClose(),intakeSlide.actionIntakeUp()),
-                    trajectoryActionpathToSub2,
+                    new ParallelAction(intakeClaw.actionClawClose(),intakeSlide.actionIntakeUp(),trajectoryActionpathToSub2,lift.actionLiftSpecimen()),
                     trajectoryActionpathpathWait2
 
 
