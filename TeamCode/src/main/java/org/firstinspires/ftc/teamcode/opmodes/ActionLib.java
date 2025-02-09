@@ -17,7 +17,7 @@ public class ActionLib {
 
     }
 
-    static int motorPrecision = 50;
+    static int motorPrecision = 10;
     static double servoPrecision = 0.001;
 
 //////////////////////////////////////////////////////////////////////////
@@ -313,7 +313,7 @@ public class ActionLib {
             }
         }
 
-        /////INTAKE UP
+        /////INTAKE DM
         public class ActionIntakeDM implements Action {
             private boolean initialized = false;
 
@@ -417,7 +417,7 @@ public class ActionLib {
             @Override
             public boolean run(@NonNull TelemetryPacket packet) {
                 Log.v("ActionLiftSpecimen", "START/////////////////////////////////////////////////////////////////");
-                int targetPosition = 1;
+                int targetPosition = -1;
 
                 double currentPosition = intake.getCurrentPosition();
                 packet.put("liftPos", currentPosition);
@@ -480,7 +480,7 @@ public class ActionLib {
 
     public static class RobotIntakeClaw {
         private Servo intakeClawServo;
-        private double openPosition = 0.705;
+        private double openPosition = 0.675;
         private double closedPosition = 0.44;
 
         private Servo  fingerServo;
