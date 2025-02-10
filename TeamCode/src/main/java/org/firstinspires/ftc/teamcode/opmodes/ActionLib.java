@@ -122,7 +122,7 @@ public class ActionLib {
             @Override
             public boolean run(@NonNull TelemetryPacket packet) {
                 Log.v("ActionLiftSpecimen", "START/////////////////////////////////////////////////////////////////");
-                int targetPosition = 2150;
+                int targetPosition = 2200;
 
                 double currentPosition = lift.getCurrentPosition();
                 packet.put("liftPos", currentPosition);
@@ -158,7 +158,7 @@ public class ActionLib {
 
             @Override
             public boolean run(@NonNull TelemetryPacket packet) {
-                int targetPosition = 1600;
+                int targetPosition = 1590;
 
                 double currentPosition = lift.getCurrentPosition();
                 packet.put("liftPos", currentPosition);
@@ -186,7 +186,7 @@ public class ActionLib {
             @Override
             public boolean run(@NonNull TelemetryPacket packet) {
                 Log.v("ActionClawGrab", "START/////////////////////////////////////////////////////////////////");
-                int targetPosition = 210;//nick dropped this 55 ticks
+                int targetPosition = 200;//nick dropped this 55 ticks
 
                 double currentPosition = lift.getCurrentPosition();
                 packet.put("liftPos", currentPosition);
