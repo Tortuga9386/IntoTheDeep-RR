@@ -583,11 +583,11 @@ public class ActionLib {
         }
 
         public void tilterDown() {
-            intakeTilterServo.setPosition(tilterUpPos);
+            intakeTilterServo.setPosition(tilterDownPos);
         }
 
         public void tilterUp() {
-            intakeTilterServo.setPosition(tilterDownPos);
+            intakeTilterServo.setPosition(tilterUpPos);
         }
 
 
