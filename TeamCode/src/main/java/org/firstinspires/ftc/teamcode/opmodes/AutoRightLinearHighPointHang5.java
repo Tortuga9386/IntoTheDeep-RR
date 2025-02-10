@@ -42,16 +42,16 @@ public class AutoRightLinearHighPointHang5 extends LinearOpMode {
         intakeTilter.tilterDown();
 
         TrajectoryActionBuilder rightPathToSub = drive.actionBuilder(initialPose)
-                .splineToConstantHeading(new Vector2d(-2, -31.75), WEST); //spline out to the sub and scoring first spec
+                .splineToConstantHeading(new Vector2d(-2, -32), WEST); //spline out to the sub and scoring first spec
         Action trajectoryActionToSub = rightPathToSub.build();
 
-        initialPose = new Pose2d(-2, -31.75, WEST);
+        initialPose = new Pose2d(-2, -32, WEST);
         TrajectoryActionBuilder backUpFromSub = drive.actionBuilder(initialPose)
                 .strafeToLinearHeading(new Vector2d(24, -42),NORTH_WEST)//backup from sub
                 .strafeToLinearHeading(new Vector2d(33,-31), NORTH)
                 .strafeToLinearHeading(new Vector2d(42, -20), NORTH_EAST)
                 .strafeToLinearHeading(new Vector2d(48, -36), EAST) //pushing to first sample
-                .splineToConstantHeading(new Vector2d(46, -64), EAST);//strafe to first sample
+                .splineToConstantHeading(new Vector2d(46, -64.5), EAST);//strafe to first sample
         Action trajectoryActionbackUpFromSub = backUpFromSub.build();
 
 
@@ -68,15 +68,32 @@ public class AutoRightLinearHighPointHang5 extends LinearOpMode {
                 .strafeToLinearHeading(new Vector2d(39,-31), NORTH)
                 .strafeToLinearHeading(new Vector2d(54, -20), NORTH_EAST)
                 .strafeToLinearHeading(new Vector2d(48, -36), EAST) //pushing to first sample
-                .splineToConstantHeading(new Vector2d(46, -64), EAST);//strafe to first sample
+                .splineToConstantHeading(new Vector2d(46, -65.5), EAST);//strafe to first sample
         Action trajectoryActionbackUpFromSub2 = backUpFromSub2.build();
+
+        initialPose = new Pose2d(46, -65.5, EAST);
+        TrajectoryActionBuilder pathToSub3 = drive.actionBuilder(initialPose)
+                .strafeToConstantHeading(new Vector2d(46,-58))
+                .strafeToLinearHeading(new Vector2d(2, -40), 1.56207)
+                .strafeToConstantHeading(new Vector2d(2,-30));
+        Action trajectoryActionpathToSub3 = pathToSub3.build();
 
 
 // wait section claw down
         initialPose = new Pose2d(6.25, -65, WEST);
         TrajectoryActionBuilder pathWait1 = drive.actionBuilder(initialPose)
-                .waitSeconds(0.1);
+                .waitSeconds(0.25);
         Action trajectoryActionpathpathWait1 = pathWait1.build();
+
+        initialPose = new Pose2d(6.25, -65, WEST);
+        TrajectoryActionBuilder pathWait3 = drive.actionBuilder(initialPose)
+                .waitSeconds(0.1);
+        Action trajectoryActionpathpathWait3 = pathWait3.build();
+
+        initialPose = new Pose2d(6.25, -65, WEST);
+        TrajectoryActionBuilder pathWait4 = drive.actionBuilder(initialPose)
+                .waitSeconds(0.1);
+        Action trajectoryActionpathpathWait4 = pathWait4.build();
 
 
         initialPose = new Pose2d(2, -29.9, WEST);
@@ -99,18 +116,25 @@ public class AutoRightLinearHighPointHang5 extends LinearOpMode {
                             intakeSlide.actionIntakeUp(),
                             lift.actionLiftSpecimen(),
                             intakeTilter.actionTilterUp(),
-                            intakeTilter.actionTilterUp(),
                             new SequentialAction(trajectoryActionpathpathWait1,trajectoryActionToSub)),
                     lift.actionliftScore(),
                     intakeClaw.actionClawOpen(),
                     new ParallelAction(trajectoryActionbackUpFromSub,lift.actionClawGrab()),
                     intakeSlide.actionIntakeUp(),
-                    new ParallelAction(intakeClaw.actionClawClose(),intakeSlide.actionIntakeUp(),trajectoryActionpathToSub2,lift.actionLiftSpecimen()),
+                    intakeClaw.actionClawClose(),
+                    trajectoryActionpathpathWait4,
+                    new ParallelAction(intakeSlide.actionIntakeUp(),trajectoryActionpathToSub2,lift.actionLiftSpecimen()),
                     intakeSlide.actionIntakeUp(),
                     lift.actionliftScore(),
                     intakeClaw.actionClawOpen(),
-                    lift.actionClawGrab(),
-                    trajectoryActionbackUpFromSub2,
+                    new ParallelAction(trajectoryActionbackUpFromSub2,lift.actionClawGrab()),
+                    intakeSlide.actionIntakeUp(),
+                    intakeClaw.actionClawClose(),
+                    trajectoryActionpathpathWait3,
+                    new ParallelAction(intakeSlide.actionIntakeUp(),trajectoryActionpathToSub3,lift.actionLiftSpecimen()),
+                    intakeSlide.actionIntakeUp(),
+                    lift.actionliftScore(),
+                    intakeClaw.actionClawOpen(),
                     trajectoryActionpathpathWait2
 
 
