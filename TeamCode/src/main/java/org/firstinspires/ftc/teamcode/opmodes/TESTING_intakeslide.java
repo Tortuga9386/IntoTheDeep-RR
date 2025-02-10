@@ -31,7 +31,8 @@ public class TESTING_intakeslide extends LinearOpMode {
         Pose2d initialPose = new Pose2d(6.25, -65, WEST);
         MecanumDrive drive = new MecanumDrive(hardwareMap, initialPose);
         ActionLib.RobotLift             lift            = new ActionLib.RobotLift(hardwareMap);
-        ActionLib.RobotIntake      intakeSlide     = new ActionLib.RobotIntake(hardwareMap);
+        ActionLib.RobotIntake      intakeSlide          = new ActionLib.RobotIntake(hardwareMap);
+        ActionLib2.RobotIntake     intakeSlide2         = new ActionLib2.RobotIntake(hardwareMap);
 //        ActionLib.RobotIntakeRotator    intakeRotator   = new ActionLib.RobotIntakeRotator(hardwareMap);
         ActionLib.RobotIntakeClaw       intakeClaw      = new ActionLib.RobotIntakeClaw(hardwareMap);
         ActionLib.RobotIntakeTilter     intakeTilter    =new ActionLib.RobotIntakeTilter(hardwareMap);
@@ -99,7 +100,7 @@ public class TESTING_intakeslide extends LinearOpMode {
 
         Actions.runBlocking(
             new SequentialAction(
-                    lift.actionLiftUp(),
+                    intakeSlide2.actionIntakeUp1(),
                     trajectoryActionpathpathWait2
 
 
