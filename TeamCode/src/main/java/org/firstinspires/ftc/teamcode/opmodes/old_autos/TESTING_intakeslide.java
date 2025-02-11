@@ -1,18 +1,20 @@
-package org.firstinspires.ftc.teamcode.opmodes;
+package org.firstinspires.ftc.teamcode.opmodes.old_autos;
 
 import com.acmerobotics.dashboard.config.Config;
 import com.acmerobotics.roadrunner.Action;
-import com.acmerobotics.roadrunner.ParallelAction;
 import com.acmerobotics.roadrunner.Pose2d;
 import com.acmerobotics.roadrunner.SequentialAction;
 import com.acmerobotics.roadrunner.TrajectoryActionBuilder;
 import com.acmerobotics.roadrunner.Vector2d;
 import com.acmerobotics.roadrunner.ftc.Actions;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
 import org.firstinspires.ftc.teamcode.MecanumDrive;
+import org.firstinspires.ftc.teamcode.opmodes.ActionLib;
 
+@Disabled
 @Config
 @Autonomous(name = "TESTING_intakeslide", group = "Autonomous")
 public class TESTING_intakeslide extends LinearOpMode {
@@ -30,7 +32,7 @@ public class TESTING_intakeslide extends LinearOpMode {
     public void runOpMode() {
         Pose2d initialPose = new Pose2d(6.25, -65, WEST);
         MecanumDrive drive = new MecanumDrive(hardwareMap, initialPose);
-        ActionLib.RobotLift             lift            = new ActionLib.RobotLift(hardwareMap);
+        ActionLib.RobotLift lift            = new ActionLib.RobotLift(hardwareMap);
         ActionLib.RobotIntake      intakeSlide          = new ActionLib.RobotIntake(hardwareMap);
         ActionLib2.RobotIntake     intakeSlide2         = new ActionLib2.RobotIntake(hardwareMap);
 //        ActionLib.RobotIntakeRotator    intakeRotator   = new ActionLib.RobotIntakeRotator(hardwareMap);
