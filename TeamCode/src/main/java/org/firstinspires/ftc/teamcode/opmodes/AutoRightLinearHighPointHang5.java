@@ -42,10 +42,10 @@ public class AutoRightLinearHighPointHang5 extends LinearOpMode {
         intakeTilter.tilterDown();
 
         TrajectoryActionBuilder rightPathToSub = drive.actionBuilder(initialPose)
-                .splineToConstantHeading(new Vector2d(-2, -32), WEST); //spline out to the sub and scoring first spec
+                .splineToConstantHeading(new Vector2d(-2, -31.5), WEST); //spline out to the sub and scoring first spec
         Action trajectoryActionToSub = rightPathToSub.build();
 
-        initialPose = new Pose2d(-2, -32, WEST);
+        initialPose = new Pose2d(-2, -31.5, WEST);
         TrajectoryActionBuilder backUpFromSub = drive.actionBuilder(initialPose)
                 .strafeToLinearHeading(new Vector2d(24, -42),NORTH_WEST)//backup from sub
                 .strafeToLinearHeading(new Vector2d(33,-31), NORTH)
@@ -58,10 +58,10 @@ public class AutoRightLinearHighPointHang5 extends LinearOpMode {
         initialPose = new Pose2d(46, -64, EAST);
         TrajectoryActionBuilder pathToSub2 = drive.actionBuilder(initialPose)
                 .strafeToConstantHeading(new Vector2d(46,-58))
-                .strafeToLinearHeading(new Vector2d(2, -29.9), WEST); //pushing to first sample
+                .strafeToLinearHeading(new Vector2d(0, -29.9), WEST); //pushing to first sample
         Action trajectoryActionpathToSub2 = pathToSub2.build();
 
-        initialPose = new Pose2d(2, -29.9, WEST);
+        initialPose = new Pose2d(0, -29.9, WEST);
         TrajectoryActionBuilder backUpFromSub2 = drive.actionBuilder(initialPose)
                 .strafeToConstantHeading(new Vector2d(2,-32))
                 .strafeToLinearHeading(new Vector2d(24, -42),NORTH_WEST)//backup from sub
@@ -74,10 +74,19 @@ public class AutoRightLinearHighPointHang5 extends LinearOpMode {
         initialPose = new Pose2d(46, -65.5, EAST);
         TrajectoryActionBuilder pathToSub3 = drive.actionBuilder(initialPose)
                 .strafeToConstantHeading(new Vector2d(46,-58))
-                .strafeToLinearHeading(new Vector2d(2, -40), 1.56207)
+                .strafeToLinearHeading(new Vector2d(2, -40), 1.570796)
                 .strafeToConstantHeading(new Vector2d(2,-30));
         Action trajectoryActionpathToSub3 = pathToSub3.build();
 
+
+        initialPose = new Pose2d(2, -30, WEST);
+        TrajectoryActionBuilder backUpFromSub3 = drive.actionBuilder(initialPose)
+                .strafeToConstantHeading(new Vector2d(2,-32))//back up from sub
+                .strafeToLinearHeading(new Vector2d(24, -42),NORTH)
+                .strafeToLinearHeading(new Vector2d(46,-30), NORTH_EAST)
+                .strafeToLinearHeading(new Vector2d(68, -18), EAST)
+                .strafeToConstantHeading(new Vector2d(68,-65));
+        Action trajectoryActionbackUpFromSub3 = backUpFromSub3.build();
 
 // wait section claw down
         initialPose = new Pose2d(6.25, -65, WEST);
@@ -135,6 +144,7 @@ public class AutoRightLinearHighPointHang5 extends LinearOpMode {
                     intakeSlide.actionIntakeUp(),
                     lift.actionliftScore(),
                     intakeClaw.actionClawOpen(),
+                    new ParallelAction(trajectoryActionbackUpFromSub3,lift.actionClawGrab()),
                     trajectoryActionpathpathWait2
 
 
