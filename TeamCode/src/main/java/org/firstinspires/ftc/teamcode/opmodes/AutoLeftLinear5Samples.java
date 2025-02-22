@@ -14,7 +14,7 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import org.firstinspires.ftc.teamcode.MecanumDrive;
 
 @Config
-@Autonomous(name = "AUTO_LEFT_5_SAMPLE", group = "Autonomous")
+@Autonomous(name = "AUTO_RIGHT_3_SAMPLE", group = "Autonomous")
 public class AutoLeftLinear5Samples extends LinearOpMode {
 
     double SOUTH = Math.PI;
@@ -28,87 +28,118 @@ public class AutoLeftLinear5Samples extends LinearOpMode {
 
     @Override
     public void runOpMode() {
-        Pose2d initialPose = new Pose2d(6.25, -65, WEST);
+        Pose2d initialPose = new Pose2d(-41, -65, WEST);
         MecanumDrive drive = new MecanumDrive(hardwareMap, initialPose);
         ActionLib.RobotLift             lift            = new ActionLib.RobotLift(hardwareMap);
         ActionLib.RobotIntake      intakeSlide     = new ActionLib.RobotIntake(hardwareMap);
 //        ActionLib.RobotIntakeRotator    intakeRotator   = new ActionLib.RobotIntakeRotator(hardwareMap);
         ActionLib.RobotIntakeClaw       intakeClaw      = new ActionLib.RobotIntakeClaw(hardwareMap);
         ActionLib.RobotIntakeTilter     intakeTilter    =new ActionLib.RobotIntakeTilter(hardwareMap);
+        ActionLib.RobotIntakeRoller     intakeRoller   =new ActionLib.RobotIntakeRoller(hardwareMap);
+        ActionLib.RobotIntakeLinkage     intakelinkage   =new ActionLib.RobotIntakeLinkage(hardwareMap);
+        ActionLib.RobotIntakefinger     intakefinger   =new ActionLib.RobotIntakefinger(hardwareMap);
+
 
         //Init robot position
         intakeClaw.clawClose();
         intakeSlide.actionIntakeUp();
         intakeTilter.tilterDown();
+        intakelinkage.linkageIn();
+        intakefinger.fingerIn();
 
-        TrajectoryActionBuilder rightPathToSub = drive.actionBuilder(initialPose)
-                .splineToConstantHeading(new Vector2d(-2, -31.5), WEST); //spline out to the sub and scoring first spec
-        Action trajectoryActionToSub = rightPathToSub.build();
+        TrajectoryActionBuilder leftPathToBasket = drive.actionBuilder(initialPose)
+                .strafeToLinearHeading(new Vector2d(-56, -58),SOUTHEAST);
+        Action trajectoryActionToBasket = leftPathToBasket.build();
 
-        initialPose = new Pose2d(-2, -31.5, WEST);
-        TrajectoryActionBuilder backUpFromSub = drive.actionBuilder(initialPose)
-                .strafeToLinearHeading(new Vector2d(24, -42),NORTH_WEST)//backup from sub
-                .strafeToLinearHeading(new Vector2d(33,-31), NORTH)
-                .strafeToLinearHeading(new Vector2d(42, -20), NORTH_EAST)
-                .strafeToLinearHeading(new Vector2d(48, -36), EAST) //pushing to first sample
-                .splineToConstantHeading(new Vector2d(46, -64.5), EAST);//strafe to first sample
-        Action trajectoryActionbackUpFromSub = backUpFromSub.build();
+        initialPose = new Pose2d(-56, -58, SOUTHEAST);
+        TrajectoryActionBuilder leftPathToSample1 = drive.actionBuilder(initialPose)
+                .strafeToLinearHeading(new Vector2d(-50, -40),WEST);
+        Action trajectoryActionToSample1 = leftPathToSample1.build();
+
+        initialPose = new Pose2d(-50, -40, WEST);
+        TrajectoryActionBuilder leftPathToGrabSample1 = drive.actionBuilder(initialPose)
+                .strafeToConstantHeading(new Vector2d(-50, -30));
+        Action trajectoryActionToGrabSample1 = leftPathToGrabSample1.build();
+
+        initialPose = new Pose2d(-50, -30, WEST);
+        TrajectoryActionBuilder leftPathToBasket2 = drive.actionBuilder(initialPose)
+                .strafeToLinearHeading(new Vector2d(-56, -58),SOUTHEAST);
+        Action trajectoryActionToBasket2 = leftPathToBasket2.build();
+
+        initialPose = new Pose2d(-56, -58, SOUTHEAST);
+        TrajectoryActionBuilder leftPathToSample2 = drive.actionBuilder(initialPose)
+                .strafeToLinearHeading(new Vector2d(-60, -40),WEST);
+        Action trajectoryActionToSample2 = leftPathToSample2.build();
+
+        initialPose = new Pose2d(-60, -40, WEST);
+        TrajectoryActionBuilder leftPathToGrabSample2 = drive.actionBuilder(initialPose)
+                .strafeToConstantHeading(new Vector2d(-60, -30));
+        Action trajectoryActionToGrabSample2 = leftPathToGrabSample2.build();
+
+        initialPose = new Pose2d(-60, -30, WEST);
+        TrajectoryActionBuilder leftPathToBasket3 = drive.actionBuilder(initialPose)
+                .strafeToLinearHeading(new Vector2d(-55.5, -57.5),SOUTHEAST);
+        Action trajectoryActionToBasket3 = leftPathToBasket3.build();
+
+        initialPose = new Pose2d(-55.5, -57.5, SOUTHEAST);
+        TrajectoryActionBuilder leftPathToSample3 = drive.actionBuilder(initialPose)
+                .strafeToLinearHeading(new Vector2d(-63, -50),1.919862);
+        Action trajectoryActionToSample3 = leftPathToSample3.build();
+
+        initialPose = new Pose2d(-63, -50, 1.919862);
+        TrajectoryActionBuilder leftPathToGrabSample3 = drive.actionBuilder(initialPose)
+                .strafeToLinearHeading(new Vector2d(-63, -42),1.919862);
+        Action trajectoryActionToGrabSample3 = leftPathToGrabSample3.build();
+
+        initialPose = new Pose2d(-63, -42, 1.919862);
+        TrajectoryActionBuilder leftPathToBasket4 = drive.actionBuilder(initialPose)
+                .strafeToLinearHeading(new Vector2d(-55, -58),4.014257);
+        Action trajectoryActionToBasket4 = leftPathToBasket4.build();
+
+        initialPose = new Pose2d(-55, -58, 4.014257);
+        TrajectoryActionBuilder leftPathToPark = drive.actionBuilder(initialPose)
+                .strafeToLinearHeading(new Vector2d(-36, -8),SOUTH)
+                .strafeToConstantHeading(new Vector2d(-28, -8));
+        Action trajectoryActionToPark = leftPathToPark.build();
 
 
-        initialPose = new Pose2d(46, -64, EAST);
-        TrajectoryActionBuilder pathToSub2 = drive.actionBuilder(initialPose)
-                .strafeToConstantHeading(new Vector2d(46,-58))
-                .strafeToLinearHeading(new Vector2d(0, -29.9), WEST); //pushing to first sample
-        Action trajectoryActionpathToSub2 = pathToSub2.build();
-
-        initialPose = new Pose2d(0, -29.9, WEST);
-        TrajectoryActionBuilder backUpFromSub2 = drive.actionBuilder(initialPose)
-                .strafeToConstantHeading(new Vector2d(2,-32))
-                .strafeToLinearHeading(new Vector2d(24, -42),NORTH_WEST)//backup from sub
-                .strafeToLinearHeading(new Vector2d(39,-31), NORTH)
-                .strafeToLinearHeading(new Vector2d(54, -20), NORTH_EAST)
-                .strafeToLinearHeading(new Vector2d(48, -36), EAST) //pushing to first sample
-                .splineToConstantHeading(new Vector2d(46, -65.5), EAST);//strafe to first sample
-        Action trajectoryActionbackUpFromSub2 = backUpFromSub2.build();
-
-        initialPose = new Pose2d(46, -65.5, EAST);
-        TrajectoryActionBuilder pathToSub3 = drive.actionBuilder(initialPose)
-                .strafeToConstantHeading(new Vector2d(46,-58))
-                .strafeToLinearHeading(new Vector2d(2, -40), 1.570796)
-                .strafeToConstantHeading(new Vector2d(2,-30));
-        Action trajectoryActionpathToSub3 = pathToSub3.build();
-
-
-        initialPose = new Pose2d(2, -30, WEST);
-        TrajectoryActionBuilder backUpFromSub3 = drive.actionBuilder(initialPose)
-                .strafeToConstantHeading(new Vector2d(2,-32))//back up from sub
-                .strafeToLinearHeading(new Vector2d(24, -42),NORTH)
-                .strafeToLinearHeading(new Vector2d(46,-30), NORTH_EAST)
-                .strafeToLinearHeading(new Vector2d(68, -18), EAST)
-                .strafeToConstantHeading(new Vector2d(68,-65));
-        Action trajectoryActionbackUpFromSub3 = backUpFromSub3.build();
 
 // wait section claw down
         initialPose = new Pose2d(6.25, -65, WEST);
         TrajectoryActionBuilder pathWait1 = drive.actionBuilder(initialPose)
-                .waitSeconds(0.25);
-        Action trajectoryActionpathpathWait1 = pathWait1.build();
+                .waitSeconds(0.5);
+        Action trajectoryActionpathWait1 = pathWait1.build();
 
         initialPose = new Pose2d(6.25, -65, WEST);
         TrajectoryActionBuilder pathWait3 = drive.actionBuilder(initialPose)
-                .waitSeconds(0.1);
-        Action trajectoryActionpathpathWait3 = pathWait3.build();
+                .waitSeconds(0.5);
+        Action trajectoryActionpathWait2 = pathWait3.build();
 
         initialPose = new Pose2d(6.25, -65, WEST);
         TrajectoryActionBuilder pathWait4 = drive.actionBuilder(initialPose)
-                .waitSeconds(0.1);
-        Action trajectoryActionpathpathWait4 = pathWait4.build();
+                .waitSeconds(0.5);
+        Action trajectoryActionpathWait3 = pathWait4.build();
 
 
         initialPose = new Pose2d(2, -29.9, WEST);
         TrajectoryActionBuilder pathWait2 = drive.actionBuilder(initialPose)
-                .waitSeconds(30);
-        Action trajectoryActionpathpathWait2 = pathWait2.build();
+                .waitSeconds(0.5);
+        Action trajectoryActionpathWait4 = pathWait2.build();
+
+        initialPose = new Pose2d(2, -29.9, WEST);
+        TrajectoryActionBuilder pathWait5 = drive.actionBuilder(initialPose)
+                .waitSeconds(0.5);
+        Action trajectoryActionpathWait5 = pathWait5.build();
+
+        initialPose = new Pose2d(2, -29.9, WEST);
+        TrajectoryActionBuilder pathWait6 = drive.actionBuilder(initialPose)
+                .waitSeconds(0.5);
+        Action trajectoryActionpathWait6 = pathWait6.build();
+
+        initialPose = new Pose2d(2, -29.9, WEST);
+        TrajectoryActionBuilder pathWait7 = drive.actionBuilder(initialPose)
+                .waitSeconds(1);
+        Action trajectoryActionpathWait7 = pathWait7.build();
 
 // wait section claw up
 
@@ -120,35 +151,38 @@ public class AutoLeftLinear5Samples extends LinearOpMode {
         if (isStopRequested()) return;
 
         Actions.runBlocking(
-            new SequentialAction(
-                    new ParallelAction(
-                            intakeSlide.actionIntakeUp(),
-                            lift.actionLiftSpecimen(),
-                            intakeTilter.actionTilterUp(),
-                            new SequentialAction(trajectoryActionpathpathWait1,trajectoryActionToSub)),
-                    lift.actionliftScore(),
-                    intakeClaw.actionClawOpen(),
-                    new ParallelAction(trajectoryActionbackUpFromSub,lift.actionClawGrab()),
-                    intakeSlide.actionIntakeUp(),
-                    intakeClaw.actionClawClose(),
-                    trajectoryActionpathpathWait4,
-                    new ParallelAction(intakeSlide.actionIntakeUp(),trajectoryActionpathToSub2,lift.actionLiftSpecimen()),
-                    intakeSlide.actionIntakeUp(),
-                    lift.actionliftScore(),
-                    intakeClaw.actionClawOpen(),
-                    new ParallelAction(trajectoryActionbackUpFromSub2,lift.actionClawGrab()),
-                    intakeSlide.actionIntakeUp(),
-                    intakeClaw.actionClawClose(),
-                    trajectoryActionpathpathWait3,
-                    new ParallelAction(intakeSlide.actionIntakeUp(),trajectoryActionpathToSub3,lift.actionLiftSpecimen()),
-                    intakeSlide.actionIntakeUp(),
-                    lift.actionliftScore(),
-                    intakeClaw.actionClawOpen(),
-                    new ParallelAction(trajectoryActionbackUpFromSub3,lift.actionClawGrab()),
-                    trajectoryActionpathpathWait2
+                new SequentialAction(
+                        new ParallelAction(trajectoryActionToBasket,lift.actionLiftToBasket(),intakeClaw.actionClawClose(),intakeTilter.actionTilterUp()),
+                        intakeClaw.actionClawOpen(),
+                        trajectoryActionpathWait1,
+                        new ParallelAction(lift.actionLiftDown(),intakeSlide.actionIntakeUp(),trajectoryActionToSample1),
+                        new ParallelAction(intakeSlide.actionIntakeDown(),intakeTilter.actionTilterUp()),
+                        trajectoryActionToGrabSample1,
+                        intakeClaw.actionClawClose(),
+                        trajectoryActionpathWait2,
+                        new ParallelAction(intakeSlide.actionIntakeUp(),trajectoryActionToBasket2,lift.actionLiftToBasket()),
+                        intakeClaw.actionClawOpen(),
+                        trajectoryActionpathWait3,
+                        new ParallelAction(lift.actionLiftDown(),intakeSlide.actionIntakeUp(),trajectoryActionToSample2),
+                        new ParallelAction(intakeSlide.actionIntakeDown(),intakeTilter.actionTilterUp()),
+                        trajectoryActionToGrabSample2,
+                        intakeClaw.actionClawClose(),
+                        trajectoryActionpathWait4,
+                        new ParallelAction(intakeSlide.actionIntakeUp(),trajectoryActionToBasket3,lift.actionLiftToBasket()),
+                        intakeClaw.actionClawOpen(),
+                        trajectoryActionpathWait5,
+                        new ParallelAction(trajectoryActionToSample3,lift.actionClawGrab(),intakeTilter.actionTilterDown(),intakeRoller.actionRollerIn()),
+                        intakeSlide.actionIntakeDown(),
+                        trajectoryActionToGrabSample3,
+                        trajectoryActionpathWait6,
+                        new ParallelAction(intakeRoller.actionRollerStop(),intakeSlide.actionIntakeUp()),
+                        new ParallelAction(lift.actionLiftToBasketRoller(),intakeTilter.actionTilterUp(),trajectoryActionToBasket4),
+                        intakeRoller.actionRollerIn(),
+                        trajectoryActionpathWait7,
+                        new ParallelAction(trajectoryActionToPark,lift.actionLiftDown(),intakeRoller.actionRollerStop(),intakefinger.actionfingerOut())
 
 
-            )
-        );
+                )
+            );
+        }
     }
-}

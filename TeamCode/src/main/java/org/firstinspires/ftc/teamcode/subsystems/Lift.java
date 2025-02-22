@@ -3,12 +3,15 @@ package org.firstinspires.ftc.teamcode.subsystems;
 import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
+import com.qualcomm.robotcore.hardware.DistanceSensor;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.Gamepad;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.hardware.TouchSensor;
+import com.qualcomm.robotcore.hardware.ColorSensor;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
+import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 import org.firstinspires.ftc.teamcode.Auto.ExampleAuto;
 import org.firstinspires.ftc.teamcode.opmodes.RobotBase;
 
@@ -72,22 +75,21 @@ public class Lift {
             slidePower = 1.0;
             if (gamepad2.y) {
                 targetPosition = 3520;
-            } else if (gamepad2.a || gamepad2.dpad_up) {
+            } if (gamepad2.a || gamepad2.dpad_up) {
                 targetPosition = 0;
-            } else if (gamepad2.x) {
+            } if (gamepad2.x) {
                 targetPosition = 2150;
-            } else if (gamepad2.dpad_left) {
+            } if (gamepad2.dpad_left) {
                 targetPosition = 1600;
-            } else if (gamepad2.b) {
+            } if (gamepad2.b) {
                 targetPosition = 210;
-            } else if (gamepad2.right_bumper) {
+            } if (gamepad2.right_bumper) {
                 targetPosition = 400;
-            } else if (gamepad2.dpad_down) {
+            } if (gamepad2.dpad_down) {
                 targetPosition = 35;
-            }
-                if (gamepad2.right_stick_y > .1) {
+            } if (gamepad2.right_stick_y > .1) {
                     targetPosition = targetPosition - 20;
-                } else if (gamepad2.right_stick_y < -.1) {
+            } if (gamepad2.right_stick_y < -.1) {
                     targetPosition = targetPosition + 20;
 
 
@@ -138,11 +140,11 @@ public class Lift {
             if (slidetargetPosition < 12){
                 slidetargetPosition = slidetargetPosition -1;
             }
-            if (gamepad2.left_stick_button) {
+            if (gamepad2.right_stick_button) {
                 slidetargetPosition = slidetargetPosition + 2;
 
             }
-            if (gamepad2.right_stick_button) {
+            if (gamepad2.left_stick_button) {
                 slidetargetPosition = slidetargetPosition - 2;
 
             }
@@ -168,30 +170,51 @@ public class Lift {
     public class IntakeClaw {
 
     public Servo intakeClaw;
+    public Servo finger;
 
      public IntakeClaw() { //HardwareMap hardwareMap, RobotBase opMode
             initHardware();
         }
 
+        private double gobacktotheshadows = 0;
+        private boolean yourmama = false;
         protected void initHardware() {
             intakeClaw = hardwareMap.get(Servo.class, "frontclaw");
             intakeClaw.setPosition(0.675);
+
+            finger = hardwareMap.get(Servo.class, "finger");
+            finger.setPosition(0);
         }
 
         public void doIntakeClawStuff(Gamepad gamepad2) {
+            finger.setPosition(0);
             if (gamepad2.right_bumper) {
                 intakeClaw.setPosition(0.44);
             }
             if (gamepad2.left_bumper) {
                 intakeClaw.setPosition(0.675);
             }
-
+            if (gamepad2.dpad_left) {
+                yourmama = true;
+                gobacktotheshadows = System.currentTimeMillis() + 75;//time to open the claw after the lift goes to score specimen position
             }
+            if (yourmama == true){
+                if (gobacktotheshadows < System.currentTimeMillis()) {
+                    intakeClaw.setPosition(0.675);
+                    yourmama = false;
+                }
+            }
+
         }
+    }
 
     public class Roller {
 
         private CRServo roller;
+        public DistanceSensor intakeSensor;
+        public int rollerPower = 1;
+        private double distance;
+
 
         public Roller() { //HardwareMap hardwareMap, RobotBase opMode
             initHardware();
@@ -200,12 +223,12 @@ public class Lift {
         protected void initHardware() {
             roller = hardwareMap.get(CRServo.class, "roller");
             roller.setDirection(CRServo.Direction.FORWARD);
+
+            intakeSensor = hardwareMap.get(DistanceSensor.class, "intakeSensor");
         }
 
         public void doIntakeRollerStuff(Gamepad gamepad2) {
             roller.setPower(gamepad2.left_trigger - gamepad2.right_trigger);
-
-
         }
     }
 
@@ -219,6 +242,7 @@ public class Lift {
 
         protected void initHardware() {
             tilter = hardwareMap.get(Servo.class, "tilter");
+            tilter.setPosition(0.5);
         }
 
         public void doIntakeTilterStuff(Gamepad gamepad2) {
@@ -262,15 +286,9 @@ public class Lift {
 
         protected void initHardware() {
             climberMotor1 = hardwareMap.get(DcMotor.class, "climber");
-
-
-
             climberMotor1.setDirection(DcMotor.Direction.FORWARD);
             climberMotor1.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
             climberMotor1.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-
-
-
         }
 
         private int targetPosition;

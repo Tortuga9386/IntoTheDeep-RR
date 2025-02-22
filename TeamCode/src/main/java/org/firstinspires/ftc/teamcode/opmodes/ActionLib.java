@@ -1,15 +1,21 @@
 package org.firstinspires.ftc.teamcode.opmodes;
 
+import static org.firstinspires.ftc.robotcore.external.BlocksOpModeCompanion.telemetry;
+
 import android.util.Log;
 
 import androidx.annotation.NonNull;
 
 import com.acmerobotics.dashboard.telemetry.TelemetryPacket;
 import com.acmerobotics.roadrunner.Action;
+import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
+import com.qualcomm.robotcore.hardware.DistanceSensor;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.Servo;
+
+import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 
 public class ActionLib {
 
@@ -17,7 +23,7 @@ public class ActionLib {
 
     }
 
-    static int motorPrecision = 10;
+    static int motorPrecision = 5;
     static double servoPrecision = 0.001;
 
 //////////////////////////////////////////////////////////////////////////
@@ -186,7 +192,7 @@ public class ActionLib {
             @Override
             public boolean run(@NonNull TelemetryPacket packet) {
                 Log.v("ActionClawGrab", "START/////////////////////////////////////////////////////////////////");
-                int targetPosition = 200;//nick dropped this 55 ticks
+                int targetPosition = 35;//nick dropped this 55 ticks
 
                 double currentPosition = lift.getCurrentPosition();
                 packet.put("liftPos", currentPosition);
@@ -223,7 +229,7 @@ public class ActionLib {
             @Override
             public boolean run(@NonNull TelemetryPacket packet) {
                 Log.v("ActionLiftToBasket", "START/////////////////////////////////////////////////////////////////");
-                int targetPosition = 4100;
+                int targetPosition = 4500;
 
                 double currentPosition = lift.getCurrentPosition();
                 packet.put("liftPos", currentPosition);
@@ -251,6 +257,43 @@ public class ActionLib {
 
         public Action actionLiftToBasket() {
             return new ActionLiftToBasket();
+        }
+
+        /////LIFT TO BASKET
+        public class ActionLiftToBasketRoller implements Action {
+            private boolean initialized = false;
+
+            @Override
+            public boolean run(@NonNull TelemetryPacket packet) {
+                Log.v("ActionLiftToBasket", "START/////////////////////////////////////////////////////////////////");
+                int targetPosition = 3300;
+
+                double currentPosition = lift.getCurrentPosition();
+                packet.put("liftPos", currentPosition);
+                if ((Math.abs(targetPosition - currentPosition) > motorPrecision) || !quitter) {
+                    goToTarget(targetPosition, liftMotorSpeed);
+                    Log.v("ActionLiftToBasket", "RUNNING//////targetPosition" + targetPosition + " vs currentPosition" + currentPosition + "////////////////////////////////////////");
+                    Log.v("ActionLiftToBasket", "RUNNING//////testVal:" + Math.abs(targetPosition - currentPosition) + " > 50///////////////////////////////////////");
+                    return true;
+                } else {
+                    if (quitter) {
+                        quitter = true;
+                        Log.v("ActionLiftToBasket", "FINISH//////I QUIT!!!!////////////////////////////////////////");
+                        Log.v("ActionLiftToBasket", "FINISH//////testVal:" + Math.abs(targetPosition - currentPosition) + " < 50///////////////////////////////////////");
+                        Log.v("ActionLiftToBasket", "FINISH//////////////////////////////////////////////////////////////////");
+                        return false;
+                    } else {
+                        Log.v("ActionLiftToBasket", "FINISH//////ON TARGET BUT NOT A QUITTER!////////////////////////////////////////");
+                        Log.v("ActionLiftToBasket", "FINISH//////testVal:" + Math.abs(targetPosition - currentPosition) + " < 50///////////////////////////////////////");
+                        Log.v("ActionLiftToBasket", "FINISH//////////////////////////////////////////////////////////////////");
+                    }
+                    return true;
+                }
+            }
+        }
+
+        public Action actionLiftToBasketRoller() {
+            return new ActionLiftToBasketRoller();
         }
 
 
@@ -568,6 +611,88 @@ public class ActionLib {
     }
 
 //////////////////////////////////////////////////////////////////////////
+///  INTAKE CLAW
+//////////////////////////////////////////////////////////////////////////
+
+    public static class RobotIntakefinger {
+        private Servo fingerServo;
+        private double outPosition = 1;
+        private double inPosition = 0;
+
+        public RobotIntakefinger(HardwareMap hardwareMap) {
+            fingerServo = hardwareMap.get(com.qualcomm.robotcore.hardware.Servo.class, "finger");
+            fingerServo.setDirection(Servo.Direction.FORWARD);
+            fingerServo.setPosition(0);
+        }
+
+        public void fingerIn() {
+            fingerServo.setPosition(inPosition);
+        }
+
+        public void fingerOut() {
+            fingerServo.setPosition(outPosition);
+            }
+
+
+        public class ActionfingerIn implements Action {
+            private boolean initialized = false;
+
+            @Override
+            public boolean run(@NonNull TelemetryPacket packet) {
+                Log.v("ActionClawOpen", "START/////////////////////////////////////////////////////////////////");
+                //extendTheFinger();
+
+                if (!initialized) {
+                    fingerServo.setPosition(inPosition);
+                    initialized = true;
+                }
+
+                double currentPosition = fingerServo.getPosition();
+                packet.put("clawPos", currentPosition);
+                if (Math.abs(inPosition - currentPosition) > servoPrecision) {
+                    fingerServo.setPosition(inPosition);
+                    return true;
+                } else {
+                    return false;
+                }
+
+            }
+        }
+
+        public Action actionfingerIn() {
+            return new ActionfingerIn();
+        }
+
+        public class ActionfingerOut implements Action {
+            private boolean initialized = false;
+
+            @Override
+            public boolean run(@NonNull TelemetryPacket packet) {
+
+                //retractFinger();
+                if (!initialized) {
+                    fingerServo.setPosition(outPosition);
+                    initialized = true;
+                }
+
+                double currentPosition = fingerServo.getPosition();
+                packet.put("clawPos", currentPosition);
+                if (Math.abs(outPosition - currentPosition) > servoPrecision) {
+                    fingerServo.setPosition(outPosition);
+                    return true;
+                } else {
+                    return false;
+                }
+            }
+        }
+
+        public Action actionfingerOut() {
+            return new ActionfingerOut();
+        }
+
+    }
+
+//////////////////////////////////////////////////////////////////////////
 ///  INTAKE TILTER
 //////////////////////////////////////////////////////////////////////////
 
@@ -647,6 +772,116 @@ public class ActionLib {
             return new ActionTilterDown();
         }
 
+    }
+
+//////////////////////////////////////////////////////////////////////////
+///  INTAKE ROLLER
+//////////////////////////////////////////////////////////////////////////
+
+    public static class RobotIntakeRoller {
+        private CRServo intakeRollerServo;
+        private double rollerInSpeed = -1;
+        private int rollerOutSpeed = 1;
+
+        public RobotIntakeRoller(HardwareMap hardwareMap) {
+            intakeRollerServo = hardwareMap.get(com.qualcomm.robotcore.hardware.CRServo.class, "roller");
+            intakeRollerServo.setDirection(CRServo.Direction.FORWARD);
+            intakeRollerServo.setPower(0);
+        }
+
+        public void rollerIn() {
+            intakeRollerServo.setPower(rollerInSpeed);
+        }
+
+        public void rollerOut() {
+            intakeRollerServo.setPower(rollerOutSpeed);
+        }
+
+        public void rollerStop() {
+            intakeRollerServo.setPower(0);
+        }
+
+
+        public class ActionRollerIn implements Action {
+            private boolean initialized = false;
+
+            @Override
+            public boolean run(@NonNull TelemetryPacket packet) {
+                Log.v("ActionClawOpen", "START/////////////////////////////////////////////////////////////////");
+                if (!initialized) {
+                    intakeRollerServo.setPower(rollerInSpeed);
+                    initialized = true;
+                }
+
+                double currentPosition = intakeRollerServo.getPower();
+                packet.put("clawPos", currentPosition);
+                if (Math.abs(rollerInSpeed - currentPosition) > servoPrecision) {
+                    intakeRollerServo.setPower(rollerInSpeed);
+                    return true;
+                } else {
+                    return false;
+                }
+
+            }
+        }
+
+        public Action actionRollerIn() {
+            return new ActionRollerIn();
+        }
+
+        public class ActionRollerOut implements Action {
+            private boolean initialized = false;
+
+            @Override
+            public boolean run(@NonNull TelemetryPacket packet) {
+
+                //retractFinger();
+                if (!initialized) {
+                    intakeRollerServo.setPower(rollerOutSpeed);
+                    initialized = true;
+                }
+
+                double currentPosition = intakeRollerServo.getPower();
+                packet.put("clawPos", currentPosition);
+                if (Math.abs(rollerOutSpeed - currentPosition) > servoPrecision) {
+                    intakeRollerServo.setPower(rollerOutSpeed);
+                    return true;
+                } else {
+                    return false;
+                }
+            }
+        }
+
+        public Action actionRollerOut() {
+            return new ActionRollerOut();
+        }
+
+        public class ActionRollerStop implements Action {
+            private boolean initialized = false;
+
+            @Override
+            public boolean run(@NonNull TelemetryPacket packet) {
+
+                //retractFinger();
+                if (!initialized) {
+                    intakeRollerServo.setPower(0);
+                    initialized = true;
+                }
+
+                double currentPosition = intakeRollerServo.getPower();
+                packet.put("clawPos", currentPosition);
+                if (Math.abs(0 - currentPosition) > servoPrecision) {
+                    intakeRollerServo.setPower(0);
+                    return true;
+                } else {
+                    return false;
+                }
+            }
+        }
+
+        public Action actionRollerStop() {
+            return new ActionRollerStop();
+        }
     }
 
 

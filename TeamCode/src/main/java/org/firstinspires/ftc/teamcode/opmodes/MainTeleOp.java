@@ -4,6 +4,7 @@ package org.firstinspires.ftc.teamcode.opmodes;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
+import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 import org.firstinspires.ftc.teamcode.subsystems.Lift;
 
 
@@ -51,7 +52,7 @@ public class MainTeleOp extends RobotBase
     public void loop() {
         drive_loop();
         lift_loop();
-        husky_loop();
+        //husky_loop();
     }
 
 
@@ -63,24 +64,25 @@ public class MainTeleOp extends RobotBase
         lift.climber.doClimberStuff(gamepad1);
         lift.roller.doIntakeRollerStuff(gamepad2);
         lift.tilter.doIntakeTilterStuff(gamepad2);
-        telemetry.addData("encoder", lift.liftSlide.liftMotor.getCurrentPosition());
-        telemetry.addData("encoderslide", lift.intakeSlide.intakeliftMotor.getCurrentPosition());
-        telemetry.addData("linkage pos",lift.intakelinkage.intakeLinkage.getPosition());
-        telemetry.addData("climber pos1",lift.climber.climberMotor1.getCurrentPosition());
+//        telemetry.addData("encoder", lift.liftSlide.liftMotor.getCurrentPosition());
+//        telemetry.addData("encoderslide", lift.intakeSlide.intakeliftMotor.getCurrentPosition());
+//        telemetry.addData("linkage pos",lift.intakelinkage.intakeLinkage.getPosition());
+//        telemetry.addData("climber pos1",lift.climber.climberMotor1.getCurrentPosition());
+//        telemetry.addData("Distance_MM's",lift.roller.intakeSensor.getDistance(DistanceUnit.MM));
     }
 
     protected void drive_loop() {
 
 
         //slidePosition
-        drive.turtleFactor = (1 - 0.75 * lift.liftSlide.liftMotor.getCurrentPosition() / 5000);
+        drive.turtleFactor = (1 - 0.5 * lift.liftSlide.liftMotor.getCurrentPosition() / 5000);
         drive.driveFromGamepad(gamepad1);
     }
 
-    protected void husky_loop() {
-        sensorHuskyLens.setAlgorithm("COLOR");
-        sensorHuskyLens.getColorBlocks();
-    }
+//    protected void husky_loop() {
+//        sensorHuskyLens.setAlgorithm("COLOR");
+//        sensorHuskyLens.getColorBlocks();
+//    }
 
     protected void imu_loop() {
 
