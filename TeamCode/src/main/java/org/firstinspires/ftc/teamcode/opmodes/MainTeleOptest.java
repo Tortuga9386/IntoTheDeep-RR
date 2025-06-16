@@ -5,7 +5,7 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 
-@TeleOp(name="***TeleOp kids***", group="teleop")
+@TeleOp(name="***TeleOp kids1***", group="teleop")
 public class MainTeleOptest extends RobotBase
 {
 
