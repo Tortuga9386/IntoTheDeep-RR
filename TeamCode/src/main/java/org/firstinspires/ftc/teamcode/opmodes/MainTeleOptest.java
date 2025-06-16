@@ -4,17 +4,14 @@ package org.firstinspires.ftc.teamcode.opmodes;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
-import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
-import org.firstinspires.ftc.teamcode.subsystems.Lift;
 
-
-@TeleOp(name="***TeleOp***", group="teleop")
-public class MainTeleOp extends RobotBase
+@TeleOp(name="***TeleOp kids***", group="teleop")
+public class MainTeleOptest extends RobotBase
 {
 
     private   ElapsedTime   runtime = new ElapsedTime();
 
-    public MainTeleOp() {}
+    public MainTeleOptest() {}
 
     /*
      * Code to run ONCE when the driver hits INIT
@@ -75,7 +72,7 @@ public class MainTeleOp extends RobotBase
 
 
         //slidePosition
-        drive.turtleFactor = ((1 - 0.5 * lift.liftSlide.liftMotor.getCurrentPosition() / 5000) * 1);
+        drive.turtleFactor = ((1 - 0.5 * lift.liftSlide.liftMotor.getCurrentPosition() / 5000) * 0.75);
         drive.driveFromGamepad(gamepad1);
     }
 

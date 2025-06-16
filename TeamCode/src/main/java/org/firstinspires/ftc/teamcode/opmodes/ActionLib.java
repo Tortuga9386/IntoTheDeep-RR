@@ -222,6 +222,42 @@ public class ActionLib {
             return new ActionClawGrab();
         }
 
+        public class ActionClawGrabSpec implements Action {
+            private boolean initialized = false;
+
+            @Override
+            public boolean run(@NonNull TelemetryPacket packet) {
+                Log.v("ActionClawGrab", "START/////////////////////////////////////////////////////////////////");
+                int targetPosition = 210;//nick dropped this 55 ticks
+
+                double currentPosition = lift.getCurrentPosition();
+                packet.put("liftPos", currentPosition);
+                if ((Math.abs(targetPosition - currentPosition) > motorPrecision) || !quitter) {
+                    goToTarget(targetPosition, liftMotorSpeed);
+                    Log.v("ActionClawGrab", "RUNNING//////targetPosition" + targetPosition + " vs currentPosition" + currentPosition + "////////////////////////////////////////");
+                    Log.v("ActionClawGrab", "RUNNING//////testVal:" + Math.abs(targetPosition - currentPosition) + " > 50///////////////////////////////////////");
+                    return true;
+                } else {
+                    if (quitter) {
+                        quitter = true;
+                        Log.v("ActionClawGrab", "FINISH//////I QUIT!!!!////////////////////////////////////////");
+                        Log.v("ActionClawGrab", "FINISH//////testVal:" + Math.abs(targetPosition - currentPosition) + " < 50///////////////////////////////////////");
+                        Log.v("ActionClawGrab", "FINISH//////////////////////////////////////////////////////////////////");
+                        return false;
+                    } else {
+                        Log.v("ActionClawGrab", "FINISH//////ON TARGET BUT NOT A QUITTER!////////////////////////////////////////");
+                        Log.v("ActionClawGrab", "FINISH//////testVal:" + Math.abs(targetPosition - currentPosition) + " < 50///////////////////////////////////////");
+                        Log.v("ActionClawGrab", "FINISH//////////////////////////////////////////////////////////////////");
+                    }
+                    return true;
+                }
+            }
+        }
+
+        public Action actionClawGrabSpec() {
+            return new ActionClawGrabSpec();
+        }
+
         /////LIFT TO BASKET
         public class ActionLiftToBasket implements Action {
             private boolean initialized = false;

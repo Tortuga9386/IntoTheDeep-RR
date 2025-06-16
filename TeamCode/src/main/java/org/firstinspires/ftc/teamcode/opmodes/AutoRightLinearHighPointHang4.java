@@ -49,15 +49,15 @@ public class AutoRightLinearHighPointHang4 extends LinearOpMode {
 
         initialPose = new Pose2d(-4, -31.5, WEST);
         TrajectoryActionBuilder backUpFromSub = drive.actionBuilder(initialPose)
-                .strafeToLinearHeading(new Vector2d(24, -42),NORTH_WEST)//backup from sub
+                .strafeToLinearHeading(new Vector2d(24, -48),NORTH_WEST)//backup from sub
                 .strafeToLinearHeading(new Vector2d(33,-31), NORTH)
                 .strafeToLinearHeading(new Vector2d(42, -20), NORTH_EAST)
                 .strafeToLinearHeading(new Vector2d(48, -36), EAST) //pushing first sample
-                .strafeToConstantHeading(new Vector2d(46, -64.5));//strafe to first sample
+                .strafeToConstantHeading(new Vector2d(46, -65.5));//strafe to first sample
         Action trajectoryActionbackUpFromSub = backUpFromSub.build();
 
 
-        initialPose = new Pose2d(46, -64, EAST);
+        initialPose = new Pose2d(46, -65.5, EAST);
         TrajectoryActionBuilder pathToSub2 = drive.actionBuilder(initialPose)
                 .strafeToConstantHeading(new Vector2d(46,-58))
                 .strafeToLinearHeading(new Vector2d(0, -29.4), WEST); //pushing to first sample
@@ -70,10 +70,10 @@ public class AutoRightLinearHighPointHang4 extends LinearOpMode {
                 .strafeToLinearHeading(new Vector2d(40,-31), NORTH)
                 .strafeToLinearHeading(new Vector2d(56, -20), NORTH_EAST)
                 .strafeToLinearHeading(new Vector2d(48, -36), EAST) //pushing to first sample
-                .strafeToConstantHeading(new Vector2d(46, -65.5));//strafe to first sample
+                .strafeToConstantHeading(new Vector2d(46, -66.5));//strafe to first sample
         Action trajectoryActionbackUpFromSub2 = backUpFromSub2.build();
 
-        initialPose = new Pose2d(46, -65.5, EAST);
+        initialPose = new Pose2d(46, -66.5, EAST);
         TrajectoryActionBuilder pathToSub3 = drive.actionBuilder(initialPose)
                 .strafeToConstantHeading(new Vector2d(46,-58))
                 .strafeToLinearHeading(new Vector2d(2, -40), 1.570796)
@@ -150,19 +150,19 @@ public class AutoRightLinearHighPointHang4 extends LinearOpMode {
                             new SequentialAction(trajectoryActionpathpathWait1,trajectoryActionToSub)),
                     lift.actionliftScore(),
                     intakeClaw.actionClawOpen(),
-                    new ParallelAction(trajectoryActionbackUpFromSub,lift.actionClawGrab(),intakeSlide.actionIntakeUp()),
+                    new ParallelAction(trajectoryActionbackUpFromSub,lift.actionClawGrabSpec(),intakeSlide.actionIntakeUp()),
                     intakeClaw.actionClawClose(),
                     trajectoryActionpathpathWait4,
                     new ParallelAction(intakeSlide.actionIntakeUp(),trajectoryActionpathToSub2,lift.actionLiftSpecimen()),
                     lift.actionliftScore(),
                     intakeClaw.actionClawOpen(),
-                    new ParallelAction(trajectoryActionbackUpFromSub2,lift.actionClawGrab(),intakeSlide.actionIntakeUp()),
+                    new ParallelAction(trajectoryActionbackUpFromSub2,lift.actionClawGrabSpec(),intakeSlide.actionIntakeUp()),
                     intakeClaw.actionClawClose(),
                     trajectoryActionpathpathWait3,
                     new ParallelAction(intakeSlide.actionIntakeUp(),trajectoryActionpathToSub3,lift.actionLiftSpecimen()),
                     lift.actionliftScore(),
                     intakeClaw.actionClawOpen(),
-                    new ParallelAction(trajectoryActionbackUpFromSub3,lift.actionClawGrab(),intakeSlide.actionIntakeUp()),
+                    new ParallelAction(trajectoryActionbackUpFromSub3,lift.actionClawGrabSpec(),intakeSlide.actionIntakeUp()),
                     intakeClaw.actionClawClose(),
                     trajectoryActionpathpathWait5,
                     new ParallelAction(trajectoryActionpathToSub4,intakeSlide.actionIntakeUp(),lift.actionLiftSpecimen()),
